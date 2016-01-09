@@ -33,6 +33,31 @@ word need_full_redraw;
 // data:4C08
 word need_redraw_because_flipped;
 
+const char* valid_levels[TOTAL_LEVELS]={
+	/* 0 */ NULL,
+	"1",
+	"2",
+	"3",
+	"4",
+	"5",
+	"6",
+	"7",
+	"8",
+	"9",
+	"10",
+	"11",
+	"12",
+	"12b",
+	"12c",
+	/* 15 */ "potion",
+	"3*",
+	"4*",
+	"5*",
+	"6*",
+	"7*",
+};
+
+
 // seg000:0000
 void far pop_main() {
 	// debug only: check that the sequence table deobfuscation did not mess things up
@@ -75,9 +100,9 @@ void far pop_main() {
 		|| recording
         #endif
 			) {
-		for (i = 14; i >= 0; --i) {
-			snprintf(sprintf_temp, sizeof(sprintf_temp), "%d", i);
-			if (check_param(sprintf_temp)) {
+		for (i = TOTAL_LEVELS-1; i; i--) {
+			//snprintf(sprintf_temp, sizeof(sprintf_temp), "%", i);
+			if (valid_levels[i] && check_param(valid_levels[i])) {
 				start_level = i;
 				break;
 			}
@@ -506,7 +531,9 @@ int __pascal far process_key() {
 					sdlperror("SDL_AddTimer");
 					quit(1);
 				}
-				if (current_level == 14) {
+				if (current_level == 20) {
+					next_level = 1;
+				} else if (current_level == 14) {
 					next_level = 1;
 				} else {
 					if (current_level == 15 && cheats_enabled) {

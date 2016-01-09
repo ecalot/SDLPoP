@@ -1735,12 +1735,9 @@ void __pascal far show_level() {
 	byte disp_level;
 	char sprintf_temp[32];
 	disp_level = current_level;
-	if (disp_level != 0 && disp_level < 14 && seamless == 0) {
-		if (disp_level == 13) {
-			disp_level = 12;
-		}
+	if (seamless == 0) {
 		text_time_remaining = text_time_total = 24;
-		snprintf(sprintf_temp, sizeof(sprintf_temp), "LEVEL %d", disp_level);
+		snprintf(sprintf_temp, sizeof(sprintf_temp), "LEVEL %s", valid_levels[current_level]);
 		display_text_bottom(sprintf_temp);
 		is_show_time = 1;
 	}

@@ -47,7 +47,7 @@ void __pascal far init_game(int level) {
 }
 
 // data:0FA0
-const cutscene_ptr_type tbl_cutscenes[16] = {
+const cutscene_ptr_type tbl_cutscenes[TOTAL_LEVELS] = {
 	NULL,
 	NULL,
 	cutscene_2_6,
@@ -61,6 +61,12 @@ const cutscene_ptr_type tbl_cutscenes[16] = {
 	NULL,
 	NULL,
 	cutscene_12,
+	NULL,
+	NULL,
+	NULL,
+
+	NULL,
+	NULL,
 	NULL,
 	NULL,
 	NULL,
@@ -81,8 +87,8 @@ void __pascal far play_level(int level_number) {
 			start_game();
 		}
 		if (level_number != current_level) {
-			if (level_number <0 || level_number >15) {
-				printf("Tried to load cutscene for level %d, not in 0..15", level_number);
+			if (level_number <0 || level_number >TOTAL_LEVELS) {
+				printf("Tried to load cutscene for level %d, not in 0.." TOTAL_LEVELS_STR, level_number);
 				quit(1);
 			}
 			cutscene_func = tbl_cutscenes[level_number];
