@@ -269,7 +269,7 @@ int __pascal far get_tile_to_draw(int room, int column, int row, byte *ptr_tilet
 			*ptr_modifier = 0;
 		}
 		else if (modifier == 51) {   // display a fake wall (pattern: wall only to the right)
-			*ptr_tiletype = tiles_20_wall;
+			*ptr_tiletype = 31; //tiles_20_wall;
 			*ptr_modifier = 1;
 		}
 		else if (modifier == 52) {   // display a fake wall (pattern: wall only to the left)
@@ -673,8 +673,13 @@ void __pascal far draw_tile_fore() {
 			}
 			break;
 		case tiles_20_wall:
+		case 31:
 			if (tbl_level_type[current_level] == 0 || graphics_mode != gmMcgaVga) {
-				add_foretable(id_chtab_7_environmentwall, wall_fram_main[curr_modifier & 0x7F], draw_xh, 0, draw_main_y, blitters_0_no_transp, 0);
+				if (curr_modifier==1 && curr_tile==31) {
+					add_foretable(id_chtab_7_environmentwall, 18, draw_xh, 0, draw_main_y, blitters_0_no_transp, 0);
+				} else {
+					add_foretable(id_chtab_7_environmentwall, wall_fram_main[curr_modifier & 0x7F], draw_xh, 0, draw_main_y, blitters_0_no_transp, 0);
+				}
 			}
 			if (graphics_mode != gmCga && graphics_mode != gmHgaHerc) {
 				wall_pattern(1, 1);
