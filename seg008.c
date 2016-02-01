@@ -623,6 +623,9 @@ void __pascal far draw_tile_anim() {
 				case 2: // life
 					pot_size = 1;
 					break;
+				case 7: //small slow fall
+					color = 10; // green small
+					break;
 			}
 			add_backtable(id_chtab_1_flameswordpotion, 23 /*bubble mask*/, draw_xh + 3, 1, draw_main_y - (pot_size << 2) - 14, blitters_40h_mono, 0);
 			add_foretable(id_chtab_1_flameswordpotion, potion_fram_bubb[curr_modifier & 0x7], draw_xh + 3, 1, draw_main_y - (pot_size << 2) - 14, color + blitters_40h_mono, 0);

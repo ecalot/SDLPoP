@@ -1641,6 +1641,7 @@ void __pascal far proc_get_object() {
 				add_life();
 			break;
 			case 2: // feather
+			case 6: // feather
 				feather_fall();
 			break;
 			case 3: // invert
