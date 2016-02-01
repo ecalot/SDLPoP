@@ -199,7 +199,7 @@ typedef struct link_type {
 #define NUMBER_OF_ROOMS 24
 
 /* useful when you want to use the editor to extend the level to more rooms */
-#define NEW_NUMBER_OF_ROOMS 50
+#define NEW_NUMBER_OF_ROOMS 100
 
 #define DEF_LEVEL_TYPE(name,rooms) \
 typedef struct name { \
