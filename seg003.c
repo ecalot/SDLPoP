@@ -20,6 +20,10 @@ The authors of this program may be contacted at http://forum.princed.org
 
 #include "common.h"
 
+word permanent_have_sword=-1;
+word permanent_have_shadow=-1;
+
+
 // data:3D1A
 sbyte distance_mirror;
 
@@ -120,7 +124,11 @@ void __pascal far play_level(int level_number) {
 		Guard.charid = charid_2_guard;
 		Guard.direction = dir_56_none;
 		do_startpos();
-		have_sword = (level_number != 1);
+		if (permanent_have_sword==-1) {
+			have_sword = (level_number != 1);
+		} else {
+			have_sword = permanent_have_sword;
+		}
 		find_start_level_door();
 		// busy waiting?
 		while (check_sound_playing() && !do_paused()) idle();
@@ -354,6 +362,9 @@ int __pascal far play_level_2() {
 				stop_sounds();
 				hitp_beg_lev = hitp_max;
 				checkpoint = 0;
+				//save permanent
+printf("ps=%d s=%d\n",permanent_have_sword,have_sword);
+				permanent_have_sword=have_sword;
 				return next_level;
 			}
 		}

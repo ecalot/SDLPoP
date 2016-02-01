@@ -676,7 +676,7 @@ void __pascal far draw_tile_fore() {
 		case 31:
 			if (tbl_level_type[current_level] == 0 || graphics_mode != gmMcgaVga) {
 				if (curr_modifier==1 && curr_tile==31) {
-					add_foretable(id_chtab_7_environmentwall, 18, draw_xh, 0, draw_main_y, blitters_0_no_transp, 0);
+					add_foretable(id_chtab_7_environmentwall, 18, draw_xh, 0, draw_main_y, blitters_10h_transp, 0);
 				} else {
 					add_foretable(id_chtab_7_environmentwall, wall_fram_main[curr_modifier & 0x7F], draw_xh, 0, draw_main_y, blitters_0_no_transp, 0);
 				}
