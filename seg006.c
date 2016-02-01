@@ -1648,8 +1648,11 @@ void __pascal far proc_get_object() {
 				toggle_upside();
 			break;
 			case 5: // open
-				get_tile(8, 0, 0);
-				trigger(0, 0, -1);
+				//get_tile(8, 0, 0);
+				//trigger(0, 0, -1);
+				display_text_bottom("And the code is!!!!!!");
+				text_time_total = 48;
+				text_time_remaining = 47;
 			break;
 			case 4: // hurt
 				stop_sounds();

@@ -612,8 +612,11 @@ void __pascal far draw_tile_anim() {
 			switch((curr_modifier & 0xF8) >> 3) {
 				case 0:
 					return; //empty
-				case 5: // hurt
 				case 6: // open
+					color = 14; // yellow
+					pot_size = 1;
+					break;
+				case 5: // hurt
 					color = 9; // blue
 					break;
 				case 3: // slow fall
@@ -681,9 +684,10 @@ void __pascal far draw_tile_fore() {
 			id = tile_table[curr_tile].fore_id;
 			if (id == 0) return;
 			if (curr_tile == tiles_10_potion) {
-				// large pots are drawn for potion types 2, 3, 4
+				// large pots are drawn for potion types 2, 3, 4 and now 6
 				potion_type = (curr_modifier & 0xF8) >> 3;
 				if (potion_type < 5 && potion_type >= 2) id = 13; // small pot = 12, large pot = 13
+				if (potion_type==6) id = 13;
 			}
 			xh = tile_table[curr_tile].fore_x + draw_xh;
 			ybottom = tile_table[curr_tile].fore_y + draw_main_y;
