@@ -196,7 +196,7 @@ typedef struct link_type {
 
 #define NUMBER_OF_DOORLINKS 256
 
-#define NUMBER_OF_ROOMS 24
+#define NUMBER_OF_ROOMS 100
 
 /* useful when you want to use the editor to extend the level to more rooms */
 #define NEW_NUMBER_OF_ROOMS 100
