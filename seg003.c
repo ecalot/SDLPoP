@@ -20,8 +20,8 @@ The authors of this program may be contacted at http://forum.princed.org
 
 #include "common.h"
 
-word permanent_have_sword=-1;
-word permanent_have_shadow=-1;
+int permanent_have_sword=-1;
+int permanent_have_shadow=-1;
 
 
 // data:3D1A
@@ -144,13 +144,15 @@ void __pascal far play_level(int level_number) {
 		#endif
 		draw_level_first();
 		show_copyprot(0);
+printf("LNi2=%d\n",current_level);
 		level_number = play_level_2();
+printf("LN=%d\n",level_number);
 		// hacked...
 #ifdef USE_COPYPROT
 		if (options.enable_copyprot && level_number == copyprot_level && !demo_mode) {
 			level_number = 15;
 		} else {
-			if (level_number == 16) {
+			if (level_number == -55) {
 				level_number = copyprot_level;
 				copyprot_level = -1;
 			}

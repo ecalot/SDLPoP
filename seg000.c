@@ -563,6 +563,7 @@ int __pascal far process_key() {
 					sdlperror("SDL_AddTimer");
 					quit(1);
 				}
+				permanent_have_sword=1;
 				if (current_level == 20) {
 					next_level = 1;
 				} else if (current_level == 14) {

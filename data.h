@@ -35,6 +35,8 @@ The authors of this program may be contacted at http://forum.princed.org
 #define TOTAL_LEVELS_STR _STRIGIFY(TOTAL_LEVELS)
 extern const char* valid_levels[TOTAL_LEVELS];
 
+extern int permanent_have_sword;
+
 // data:5F8A
 extern word text_time_remaining;
 // data:4C56
@@ -125,7 +127,7 @@ extern byte* curr_room_modif;
 extern word draw_xh;
 
 // data:02B2
-extern /*const*/ byte tbl_level_type[TOTAL_LEVELS] INIT(= {0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0});
+extern /*const*/ byte tbl_level_type[TOTAL_LEVELS] INIT(= {0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0});
 // 1.3
 extern /*const*/ word tbl_level_color[TOTAL_LEVELS] INIT(= {0, 0, 0, 1, 0, 0, 0, 1, 2, 2, 0, 0, 3, 3, 4, 0});
 // data:0F9E
@@ -406,9 +408,9 @@ extern short tile_col;
 // data:229C
 extern const short y_land[] INIT(= {-8, 55, 118, 181, 244});
 // data:03D4
-extern /*const*/ short tbl_guard_type[TOTAL_LEVELS] INIT(= {0, 0, 0, 2, 0, 0, 1, 0, 0, 0, 0, 0, 4, 3, -1, -1});
+extern /*const*/ short tbl_guard_type[TOTAL_LEVELS] INIT(= {0, 0, 0, 2, 0, 0, 1, 0, 0, 0, 0, 0, 4, 3, -1, 0,0,0});
 // data:0EDA
-extern /*const*/ byte tbl_guard_hp[TOTAL_LEVELS] INIT(= {4, 3, 3, 3, 3, 4, 5, 4, 4, 5, 5, 5, 4, 6, 0, 0});
+extern /*const*/ byte tbl_guard_hp[TOTAL_LEVELS] INIT(= {4, 3, 3, 3, 3, 4, 5, 4, 4, 5, 5, 5, 4, 6, 0, 0,4,3,3,4});
 // data:5888
 extern word curr_guard_color;
 // data:288C
