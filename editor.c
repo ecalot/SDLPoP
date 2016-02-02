@@ -151,7 +151,7 @@ copied_type copied={NO_TILE_,extra_none,NO_TILE_};
 
 tile_packed_type clipboard[30]={NO_TILE_,NO_TILE_,NO_TILE_,NO_TILE_,NO_TILE_,NO_TILE_,NO_TILE_,NO_TILE_,NO_TILE_,NO_TILE_,NO_TILE_,NO_TILE_,NO_TILE_,NO_TILE_,NO_TILE_,NO_TILE_,NO_TILE_,NO_TILE_,NO_TILE_,NO_TILE_,NO_TILE_,NO_TILE_,NO_TILE_,NO_TILE_,NO_TILE_,NO_TILE_,NO_TILE_,NO_TILE_,NO_TILE_,NO_TILE_};
 byte selected_mask[30]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-#define clean_selected_mask() memset(selected_mask,0,sizeof(byte)*30)
+#define clean_selected_mask(room) memset(selected_mask,0,sizeof(byte)*30);selected_mask_room=room
 int selected_mask_room=-1;
 enum {chNothing=-1,chFullRoom=1,chTiles=0} clipboard_has=chNothing;
 int clipboard_shift=0;
@@ -165,7 +165,8 @@ tMap edited_map={NULL,NULL};
 int edited_doorlinks=0;
 int edition_level=-1;
 
-#define editor__do(field,c,mark) editor__do_( ((long)(&(((level_type*)NULL)->field))) ,c,mark)
+#define offset_(field)  ((long)(&(((level_type*)NULL)->field)))
+#define editor__do(field,c,mark) editor__do_( offset_(field) ,c,mark)
 void editor__do_(long offset, byte c, tUndoQueueMark mark) {
 	byte before;
 	mark=mark|prevMark;
@@ -337,6 +338,22 @@ void door_api_init(int* max_doorlinks) {
 		(*max_doorlinks)++;
 	} while ((*max_doorlinks)<256 && next);
 	(*max_doorlinks)--;
+}
+
+void door_api_swap(const int* max_doorlinks, int r1,int r2) {
+	for (int i=0;i<=*max_doorlinks;i++) {
+		tile_global_location_type door;
+		short next;
+		get_doorlink((edited.doorlinks2[i]<<8)|edited.doorlinks1[i],&door,&next);
+		int room=R(door);
+		if (R(door)==r1) room=r2;
+		else if (R(door)==r2) room=r1;
+
+		Uint16 doorlink;
+		set_doorlink(&doorlink,T(room,P(door)),next);
+		editor__do(doorlinks1[i],doorlink&0xff,mark_middle);
+		editor__do(doorlinks2[i],(doorlink>>8)&0xff,mark_middle);
+	}
 }
 
 void door_api_refresh(int* max_doorlinks, tMap* map, int* selected_door_tile) {
@@ -515,7 +532,7 @@ void printl() {
 		tile_global_location_type tile;
 		short next;
 		get_doorlink((edited.doorlinks2[i]<<8)|edited.doorlinks1[i],&tile,&next);
-		printf("i=%d r=%d,t=%d next=%d\n",i,tile.room,tile.tilepos,next);
+		printf("i=%d r=%d,t=%d next=%d\n",i,R(tile),P(tile),next);
 	}
 }*/
 
@@ -709,6 +726,87 @@ int ini_editor_callback(const char *section, const char *name, const char *value
 *              Editor functions              *
 \********************************************/
 
+
+void dump_room(int room,byte* aux) {
+	int i;
+	int j=0;
+
+#define dump_multiple_block(field,off,size) for (i=0;i<size;i++) aux[j++]=((byte*)&edited)[offset_(field)+(off)+i];
+
+	dump_multiple_block(fg,30*(room-1),30);
+	dump_multiple_block(bg,30*(room-1),30);
+	dump_multiple_block(roomlinks,sizeof(link_type)*(room-1),sizeof(link_type));
+/*
+	dump_multiple_block(guards_tile,(room-1),1);
+	dump_multiple_block(guards_dir,(room-1),1);
+	dump_multiple_block(guards_x,(room-1),1);
+	dump_multiple_block(guards_skill,(room-1),1);
+	dump_multiple_block(guards_seq_hi,(room-1),1);
+	dump_multiple_block(guards_color,(room-1),1);
+*/
+}
+void load_room(int room,const byte* aux) {
+	int i;
+	int j=0;
+
+#define load_multiple_block(field,off,size) for (i=0;i<size;i++) editor__do_(offset_(field)+(off)+i,aux[j++],mark_middle);
+
+	load_multiple_block(fg,30*(room-1),30);
+	load_multiple_block(bg,30*(room-1),30);
+	load_multiple_block(roomlinks,sizeof(link_type)*(room-1),sizeof(link_type));
+/*	load_multiple_block(guards_tile,(room-1),1);
+	load_multiple_block(guards_dir,(room-1),1);
+	load_multiple_block(guards_x,(room-1),1);
+	load_multiple_block(guards_skill,(room-1),1);
+	load_multiple_block(guards_seq_hi,(room-1),1);
+	load_multiple_block(guards_color,(room-1),1);
+*/
+}
+void printf_links() {
+	printf("debug\n");
+	for (int i=0;i<NUMBER_OF_ROOMS;i++) {
+		printf("S%d: L%d R%d A%d B%d\n",i+1,edited.roomlinks[i].left,edited.roomlinks[i].right,edited.roomlinks[i].up,edited.roomlinks[i].down);
+	}
+}
+void editor_swap_room_id(int r1, int r2) {
+	printf("SWAP: S%d WITH S%d %ld\n",r1,r2,sizeof(link_type));
+	editor__do_mark_start(flag_redraw);
+
+	byte dump_r1[70];
+	byte dump_r2[70];
+	dump_room(r1,dump_r1);
+	dump_room(r2,dump_r2);
+	load_room(r2,dump_r1);
+	load_room(r1,dump_r2);
+
+	//update room links
+	for (int i=0;i<NUMBER_OF_ROOMS*4;i++) {
+		byte l=i[(byte*)&edited.roomlinks];
+		if (l==r1) editor__do_(offset_(roomlinks)+i,r2,mark_middle);
+		if (l==r2) editor__do_(offset_(roomlinks)+i,r1,mark_middle);
+	}
+
+	//update start room
+	byte s=edited.start_room;
+	if (s==r1) editor__do(start_room,r2,mark_middle);
+	if (s==r2) editor__do(start_room,r1,mark_middle);
+
+	door_api_swap(&edited_doorlinks,r1,r2);
+
+	editor__do_mark_end(flag_redraw);
+
+	ed_select_room(r1);
+	ed_redraw_room();
+	ed_select_room(r2);
+	ed_redraw_room();
+
+	need_full_redraw=1;
+
+	//TODO: update doorlinks
+
+}
+
+
 chtab_type* chtab_editor_sprites=NULL;
 void editor__load_level() {
 	dat_type* dathandle;
@@ -768,11 +866,11 @@ void load_edit_palettes(level_type* level_to_load) {
 	load_resource("editor",100,&(level_to_load->fg[NUMBER_OF_ROOMS*30]),8*30, "bin");
 	load_resource("editor",101,&(level_to_load->bg[NUMBER_OF_ROOMS*30]),8*30, "bin");
 	if (!load_resource("editor",102,&(level_to_load->roomlinks[NUMBER_OF_ROOMS]),8*sizeof(link_type), "bin"))
-		for (int a=24;a<24+8;a++) {
-			level_to_load->roomlinks[a].left=(a==24)?0:a-1+1;
-			level_to_load->roomlinks[a].right=(a==24+7)?0:a+1+1;
-			level_to_load->roomlinks[a].up=(a<24+4)?0:a-4+1;
-			level_to_load->roomlinks[a].down=(a>=24+4)?0:a+4+1;
+		for (int a=NUMBER_OF_ROOMS;a<NUMBER_OF_ROOMS+8;a++) {
+			level_to_load->roomlinks[a].left=(a==NUMBER_OF_ROOMS)?0:a-1+1;
+			level_to_load->roomlinks[a].right=(a==NUMBER_OF_ROOMS+7)?0:a+1+1;
+			level_to_load->roomlinks[a].up=(a<NUMBER_OF_ROOMS+4)?0:a-4+1;
+			level_to_load->roomlinks[a].down=(a>=NUMBER_OF_ROOMS+4)?0:a+4+1;
 		}
 	for (int i=NUMBER_OF_ROOMS;i<NUMBER_OF_ROOMS+8;i++)
 		level_to_load->guards_tile[i]=30;
@@ -880,6 +978,8 @@ void save_level() {
 void save_extended_level() {
 	level_extended_type aux;
 	memset(&aux,0,sizeof(aux));
+	for (int i=NUMBER_OF_ROOMS;i<NEW_NUMBER_OF_ROOMS;i++)
+		aux.guards_tile[i]=30;
 	editor__extend_level_to_new_rooms(&aux,&edited);
 	save_resource("LEVELS.DAT",current_level + 3000, &aux, sizeof(aux), "bin");
 }
@@ -1084,7 +1184,7 @@ void editor__clean_room(int room) {
 	tile_packed_type empty={.number=0};
 	editor__do_mark_start(flag_redraw);
 	for (int i=0;i<30;i++)
-		if (selected_mask[i])
+		if (selected_mask[i] || (room!=selected_mask_room))
 			editor_change_tile(T(room,i),empty);
 	editor__do_mark_end(flag_redraw);
 	ed_redraw_room();
@@ -1741,8 +1841,7 @@ void editor__handle_mouse_button(SDL_MouseButtonEvent e,mouse_type mouse) {
 		if (map_selected_room) editor__randomize(map_selected_room);
 	} else if (e.button==SDL_BUTTON_LEFT && mouse.keys==(k_ctrl)) { /* ctrl+left click: select tile */
 		if (selected_mask_room!=drawn_room) {
-			selected_mask_room=drawn_room;
-			clean_selected_mask();
+			clean_selected_mask(drawn_room);
 		}
 		selected_mask[mouse.tilepos]^=1;
 	}
@@ -1800,6 +1899,21 @@ void editor__process_key(int key,const char** answer_text, word* need_show_text)
 		*need_show_text=1;
 		}
 		break;
+	case SDL_SCANCODE_S:
+		{
+		static word selected_room=0;
+		if (selected_room) {
+			sprintf(aux,"SWAP: S%d WITH S%d",selected_room,drawn_room);
+			editor_swap_room_id(selected_room,drawn_room);
+			selected_room=0;
+		} else {
+			selected_room=drawn_room;
+			sprintf(aux,"SELECTED S%d TO SWAP",selected_room);
+		}
+		*answer_text=aux;
+		*need_show_text=1;
+		}
+		break;
 	case SDL_SCANCODE_DELETE: /* delete */
 	case SDL_SCANCODE_BACKSPACE: /* backspace */
 		editor__remove_guard();
@@ -1807,7 +1921,7 @@ void editor__process_key(int key,const char** answer_text, word* need_show_text)
 	case SDL_SCANCODE_DELETE | WITH_CTRL: /* ctrl-delete */
 	case SDL_SCANCODE_BACKSPACE | WITH_CTRL: /* ctrl-backspace */
 		editor__clean_room(drawn_room);
-		clean_selected_mask();
+		clean_selected_mask(-1);
 		break;
 	case SDL_SCANCODE_DELETE | WITH_SHIFT: /* shift-delete */
 	case SDL_SCANCODE_BACKSPACE | WITH_SHIFT: /* shift-backspace */
@@ -1930,13 +2044,13 @@ void editor__process_key(int key,const char** answer_text, word* need_show_text)
 		break;
 	case SDL_SCANCODE_C | WITH_CTRL: /* ctrl-c: copy room */
 		*answer_text=editor__copy_room(drawn_room)?"ROOM COPIED":"TILES COPIED";
-		clean_selected_mask();
+		clean_selected_mask(-1);
 		*need_show_text=1;
 		break;
 	case SDL_SCANCODE_X | WITH_CTRL: /* ctrl-x: copy room */
 		*answer_text=editor__copy_room(drawn_room)?"ROOM CUT":"TILES CUT";
 		editor__clean_room(drawn_room);
-		clean_selected_mask();
+		clean_selected_mask(-1);
 		*need_show_text=1;
 		break;
 	case SDL_SCANCODE_V | WITH_CTRL: /* ctrl-v: paste room */
