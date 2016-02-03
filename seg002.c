@@ -61,6 +61,7 @@ const byte init_shad_12[] = {0x0F, 0x51, 0xE8, 0, 0, 0, 0, 0};
 // seg002:0064
 void __pascal far check_shadow() {
 	offguard = 0;
+	if (!permanent_have_shadow) return;
 	if (current_level == 12) {
 		// Special event: level 12 shadow
 		if (!united_with_shadow && drawn_room == 15) {

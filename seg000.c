@@ -573,6 +573,17 @@ int __pascal far process_key() {
 			}
 			#endif
 		break;
+		case SDL_SCANCODE_D | WITH_SHIFT: // shift-d
+			permanent_have_sword=(permanent_have_sword!=1)?1:0;
+			have_sword=permanent_have_sword;
+			answer_text = permanent_have_sword==1?"Sword ON":"Sword OFF";
+			need_show_text = 1;
+		break;
+		case SDL_SCANCODE_F | WITH_SHIFT: // shift-f
+			permanent_have_shadow=(permanent_have_shadow!=1)?1:0;
+			answer_text = permanent_have_shadow==1?"Shadow ON":"Shadow OFF";
+			need_show_text = 1;
+		break;
 		case SDL_SCANCODE_L | WITH_SHIFT: // shift-l
 			if (current_level <= 3 || cheats_enabled) {
 				// if shift is not released within the delay, the cutscene is skipped
@@ -586,6 +597,7 @@ int __pascal far process_key() {
 					quit(1);
 				}
 				permanent_have_sword=1;
+				if (current_level == 4) permanent_have_shadow=1; /* skipping the level will create the shadow */
 				if (current_level == 20) {
 					next_level = 1;
 				} else if (current_level == 14) {

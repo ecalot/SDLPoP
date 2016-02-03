@@ -109,6 +109,11 @@ void __pascal far play_level(int level_number) {
 		if (level_number != current_level) {
 printf("TO FORK: level %d!=%d r%d pos %d,%d\n",level_number,current_level,Kid.room,Kid.curr_col,Kid.curr_row);
 			if (level_number==3 && current_level==2 && Kid.room==30) level_number=16; /* send the kid to a fork */
+
+			if (level_number==5 && current_level==4 && permanent_have_shadow==-1) {
+printf("bye bye shadow\n");
+				permanent_have_shadow=0; /* the shadow will be off forever */
+			}
 			load_lev_spr(level_number);
 		}
 		load_level();
