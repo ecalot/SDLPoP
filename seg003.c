@@ -108,7 +108,8 @@ void __pascal far play_level(int level_number) {
 		}
 		if (level_number != current_level) {
 printf("TO FORK: level %d!=%d r%d pos %d,%d\n",level_number,current_level,Kid.room,Kid.curr_col,Kid.curr_row);
-			if (level_number==3 && current_level==2 && Kid.room==30) level_number=16; /* send the kid to a fork */
+			if (level_number==3 && current_level==2 && Kid.room==30) level_number=16; /* send the kid to a fork: 3* */
+			if (level_number==3 && current_level==2 && Kid.room==29) level_number=26; /* send the kid to a fork: 3+ */
 			load_lev_spr(level_number);
 		}
 		load_level();
