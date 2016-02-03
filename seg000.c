@@ -97,7 +97,7 @@ void far pop_main() {
 	load_options();
 	apply_seqtbl_patches();
 
-	char sprintf_temp[100];
+	//char sprintf_temp[100];
 	int i;
 
 	dathandle = open_dat("PRINCE.DAT", 0);

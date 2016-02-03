@@ -30,12 +30,13 @@ The authors of this program may be contacted at http://forum.princed.org
 #endif
 
 // Custom "extensions"
-#define TOTAL_LEVELS 36
+#define TOTAL_LEVELS 40
 #define _STRIGIFY(x) #x
 #define TOTAL_LEVELS_STR _STRIGIFY(TOTAL_LEVELS)
 extern const char* valid_levels[TOTAL_LEVELS];
 
 extern int permanent_have_sword;
+extern int permanent_have_shadow;
 
 // data:5F8A
 extern word text_time_remaining;

@@ -489,8 +489,9 @@ void __pascal far timers() {
 // seg003:0798
 void __pascal far check_mirror() {
 	word clip_top;
-	if (jumped_through_mirror == -1) {
+	if (jumped_through_mirror == -1 && permanent_have_shadow==-1) {
 		jump_through_mirror();
+		permanent_have_shadow=1;
 	} else {
 		if (get_tile_at_char() == tiles_13_mirror) {
 			loadkid();
