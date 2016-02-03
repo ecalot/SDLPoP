@@ -602,7 +602,7 @@ void __pascal far play_seq() {
 						break;
 					case SND_LEVEL: // level
 						if (is_sound_on) {
-							if (current_level == 4) {
+							if (current_level == 4 && permanent_have_shadow!=-1) {
 								play_sound(sound_32_shadow_music); // end level with shadow (level 4)
 							} else if (current_level != 13 && current_level != 15) {
 								play_sound(sound_41_end_level_music); // end level
