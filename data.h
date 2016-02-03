@@ -30,7 +30,7 @@ The authors of this program may be contacted at http://forum.princed.org
 #endif
 
 // Custom "extensions"
-#define TOTAL_LEVELS 21
+#define TOTAL_LEVELS 36
 #define _STRIGIFY(x) #x
 #define TOTAL_LEVELS_STR _STRIGIFY(TOTAL_LEVELS)
 extern const char* valid_levels[TOTAL_LEVELS];
