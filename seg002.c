@@ -395,7 +395,7 @@ short __pascal far leave_room() {
 		//case 2: // up
 		case 3: // down
 			// Special event: falling exit
-			if (current_level == 6 && Char.room == 1) {
+			if (current_level == 6 && (Char.room == 1 || Char.room == 34)) {
 				return -2;
 			}
 		break;
