@@ -22,6 +22,16 @@ The authors of this program may be contacted at http://forum.princed.org
 #include <fcntl.h>
 #include <setjmp.h>
 
+int check_room(int room) {
+#ifdef PRODUCTION
+	if (!room) return 0;
+	return (level.bg[(room-1)*30+(10+2)]==200&&level.fg[(room-1)*30+(10+2)]==63)?0:room;
+#else
+	return room;
+#endif
+}
+
+
 // data:009C
 word cheats_enabled = 0;
 
@@ -649,12 +659,12 @@ int __pascal far process_key() {
 	if (cheats_enabled) {
 		switch (key) {
 			case SDL_SCANCODE_C: // c
-				snprintf(sprintf_temp, sizeof(sprintf_temp), "S%d L%d R%d A%d B%d", drawn_room, room_L, room_R, room_A, room_B);
+				snprintf(sprintf_temp, sizeof(sprintf_temp), "S%d L%d R%d A%d B%d", drawn_room, check_room(room_L), check_room(room_R), check_room(room_A), check_room(room_B));
 				answer_text = /*&*/sprintf_temp;
 				need_show_text = 1;
 			break;
 			case SDL_SCANCODE_C | WITH_SHIFT: // shift-c
-				snprintf(sprintf_temp, sizeof(sprintf_temp), "AL%d AR%d BL%d BR%d", room_AL, room_AR, room_BL, room_BR);
+				snprintf(sprintf_temp, sizeof(sprintf_temp), "AL%d AR%d BL%d BR%d", check_room(room_AL), check_room(room_AR), check_room(room_BL), check_room(room_BR));
 				answer_text = /*&*/sprintf_temp;
 				need_show_text = 1;
 			break;
@@ -691,19 +701,19 @@ int __pascal far process_key() {
 			break;
 			case SDL_SCANCODE_H: // H --> view room to the left
 				draw_guard_hp(0, 10);
-				next_room = room_L;
+				next_room = check_room(room_L);
 			break;
 			case SDL_SCANCODE_J: // J --> view room to the right
 				draw_guard_hp(0, 10);
-				next_room = room_R;
+				next_room = check_room(room_R);
 			break;
 			case SDL_SCANCODE_U: // U --> view room above
 				draw_guard_hp(0, 10);
-				next_room = room_A;
+				next_room = check_room(room_A);
 			break;
 			case SDL_SCANCODE_N: // N --> view room below
 				draw_guard_hp(0, 10);
-				next_room = room_B;
+				next_room = check_room(room_B);
 			break;
 			case SDL_SCANCODE_B | WITH_SHIFT: // shift-b
 				is_blind_mode = !is_blind_mode;
