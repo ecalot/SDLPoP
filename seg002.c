@@ -61,6 +61,7 @@ const byte init_shad_12[] = {0x0F, 0x51, 0xE8, 0, 0, 0, 0, 0};
 // seg002:0064
 void __pascal far check_shadow() {
 	offguard = 0;
+	if (!permanent_have_shadow) return;
 	if (current_level == 12) {
 		// Special event: level 12 shadow
 		if (!united_with_shadow && drawn_room == 15) {
@@ -394,7 +395,7 @@ short __pascal far leave_room() {
 		//case 2: // up
 		case 3: // down
 			// Special event: falling exit
-			if (current_level == 6 && Char.room == 1) {
+			if (current_level == 6 && (Char.room == 1 || Char.room == 34)) {
 				return -2;
 			}
 		break;

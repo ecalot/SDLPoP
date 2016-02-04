@@ -110,6 +110,11 @@ void __pascal far play_level(int level_number) {
 printf("TO FORK: level %d!=%d r%d pos %d,%d\n",level_number,current_level,Kid.room,Kid.curr_col,Kid.curr_row);
 			if (level_number==3 && current_level==2 && Kid.room==30) level_number=16; /* send the kid to a fork: 3* */
 			if (level_number==3 && current_level==2 && Kid.room==29) level_number=26; /* send the kid to a fork: 3+ */
+
+			if (level_number==5 && current_level==4 && permanent_have_shadow==-1) {
+printf("bye bye shadow\n");
+				permanent_have_shadow=0; /* the shadow will be off forever */
+			}
 			load_lev_spr(level_number);
 		}
 		load_level();
@@ -490,8 +495,9 @@ void __pascal far timers() {
 // seg003:0798
 void __pascal far check_mirror() {
 	word clip_top;
-	if (jumped_through_mirror == -1) {
+	if (jumped_through_mirror == -1 && permanent_have_shadow==-1) {
 		jump_through_mirror();
+		permanent_have_shadow=1;
 	} else {
 		if (get_tile_at_char() == tiles_13_mirror) {
 			loadkid();

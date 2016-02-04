@@ -1748,9 +1748,9 @@ void __pascal far show_time() {
 
 // seg008:25A8
 void __pascal far show_level() {
-	byte disp_level;
+	//byte disp_level;
 	char sprintf_temp[32];
-	disp_level = current_level;
+	//disp_level = current_level;
 	if (seamless == 0) {
 		text_time_remaining = text_time_total = 24;
 		snprintf(sprintf_temp, sizeof(sprintf_temp), "LEVEL %s", valid_levels[current_level]);
