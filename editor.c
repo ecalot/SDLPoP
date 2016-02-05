@@ -1029,7 +1029,7 @@ void editor__remove_guard() {
 
 int editor__guard_skill(int delta) {
 	int new_skill=level.guards_skill[loaded_room-1]+delta;
-	if (0<=new_skill && new_skill<12 && level.guards_tile[loaded_room-1]<30) {
+	if (0<=new_skill && new_skill<13 && level.guards_tile[loaded_room-1]<30) {
 		editor__do(guards_skill[loaded_room-1],new_skill,mark_all);
 		return new_skill;
 	}

@@ -78,6 +78,7 @@ const cutscene_ptr_type tbl_cutscenes[TOTAL_LEVELS] = {
 
 // seg003:005C
 void __pascal far play_level(int level_number) {
+	int auxiliar_entry=0;
 	cutscene_ptr_type cutscene_func;
 #ifdef USE_COPYPROT
 	if (options.enable_copyprot && level_number == copyprot_level) {
@@ -115,6 +116,9 @@ printf("TO FORK: level %d!=%d r%d pos %d,%d\n",level_number,current_level,Kid.ro
 printf("bye bye shadow\n");
 				permanent_have_shadow=0; /* the shadow will be off forever */
 			}
+			if (level_number==7 && current_level==6 && Kid.room==34) {
+				auxiliar_entry=1;
+			}
 			load_lev_spr(level_number);
 		}
 		load_level();
@@ -137,7 +141,7 @@ printf("bye bye shadow\n");
 		hitp_delta = 0;
 		Guard.charid = charid_2_guard;
 		Guard.direction = dir_56_none;
-		do_startpos();
+		do_startpos(auxiliar_entry);
 		if (permanent_have_sword==-1) {
 			have_sword = (level_number != 1);
 		} else {
@@ -171,7 +175,7 @@ printf("LN=%d\n",level_number);
 }
 
 // seg003:01A3
-void __pascal far do_startpos() {
+void __pascal far do_startpos(int aux) {
 	word x;
 	// Special event: start at checkpoint
 	if (current_level == 3 && checkpoint) {
@@ -181,6 +185,14 @@ void __pascal far do_startpos() {
 		// Special event: remove loose floor
 		get_tile(7, 4, 0);
 		curr_room_tiles[curr_tilepos] = tiles_0_empty;
+	}
+	if (current_level == 7 && aux) {
+		level.start_dir = dir_FF_left;
+		level.start_room = 35;
+		level.start_pos = 23;
+		// Special event: remove potion if shadow
+		//get_tile(7, 4, 0);
+		//curr_room_tiles[curr_tilepos] = tiles_1_floor;
 	}
 	next_room = Char.room = level.start_room;
 	x = level.start_pos;

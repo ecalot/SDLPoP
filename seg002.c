@@ -21,19 +21,19 @@ The authors of this program may be contacted at http://forum.princed.org
 #include "common.h"
 
 // data:0E32
-const word strikeprob  [] = { 61,100, 61, 61, 61, 40,100,220,  0, 48, 32, 48};
+const word strikeprob  [] = { 61,100, 61, 61, 61, 40,100,220,  0, 48, 32, 48, 255};
 // data:0E4A
-const word restrikeprob[] = {  0,  0,  0,  5,  5,175, 16,  8,  0,255,255,150};
+const word restrikeprob[] = {  0,  0,  0,  5,  5,175, 16,  8,  0,255,255,150, 255};
 // data:0E62
-const word blockprob   [] = {  0,150,150,200,200,255,200,250,  0,255,255,255};
+const word blockprob   [] = {  0,150,150,200,200,255,200,250,  0,255,255,255, 255};
 // data:0E7A
-const word impblockprob[] = {  0, 61, 61,100,100,145,100,250,  0,145,255,175};
+const word impblockprob[] = {  0, 61, 61,100,100,145,100,250,  0,145,255,175, 255};
 // data:0E92
-const word advprob     [] = {255,200,200,200,255,255,200,  0,  0,255,100,100};
+const word advprob     [] = {255,200,200,200,255,255,200,  0,  0,255,100,100, 1};
 // data:0EAA
-const word refractimer [] = { 16, 16, 16, 16,  8,  8,  8,  8,  0,  8,  0,  0};
+const word refractimer [] = { 16, 16, 16, 16,  8,  8,  8,  8,  0,  8,  0,  0, 4};
 // data:0EC2
-const word extrastrength[] = {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0};
+const word extrastrength[] = {0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 6};
 
 // seg002:0000
 void __pascal far do_init_shad(const byte *source,int seq_index) {
@@ -149,7 +149,7 @@ void __pascal far enter_guard() {
 	}
     play_seq();
 	guard_skill = level.guards_skill[room_minus_1];
-	if (guard_skill >= 12) {
+	if (guard_skill >= 13) {
 		guard_skill = 3;
 	}
 	frame = Char.frame;
