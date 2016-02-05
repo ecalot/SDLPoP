@@ -13,7 +13,7 @@ OS      := $(shell uname)
 ifeq ($(OS),Darwin)
 LIBS := $(shell sdl2-config --libs) -lSDL2_image -lSDL2_mixer
 INCS := -I/opt/local/include
-CFLAGS += $(INCS) -Wall -std=gnu99 -D_GNU_SOURCE=1 -D_THREAD_SAFE -DOSX
+CFLAGS += $(INCS) -Wall -std=gnu99 -D_GNU_SOURCE=1 -D_THREAD_SAFE -DOSX #-DPRODUCTION
 else
 LIBS := $(shell pkg-config --libs   sdl2 SDL2_image SDL2_mixer)
 INCS := $(shell pkg-config --cflags sdl2 SDL2_image SDL2_mixer)

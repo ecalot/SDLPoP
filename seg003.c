@@ -193,6 +193,7 @@ void __pascal far do_startpos(int aux) {
 		// Special event: remove potion if shadow
 		//get_tile(7, 4, 0);
 		//curr_room_tiles[curr_tilepos] = tiles_1_floor;
+		seqtbl_offset_char(seq_7_fall); // fall
 	}
 	next_room = Char.room = level.start_room;
 	x = level.start_pos;
@@ -242,6 +243,11 @@ void __pascal far set_start_pos() {
 	if (current_level == 7 && Char.room == 17) {
 		// Special event: level 7 falling entry
 		// level 7, room 17: show room below
+		goto_other_room(3);
+	}
+	if (current_level == 7 && Char.room == 35) {
+		// Special event: level 7 falling entry
+		// level 7, room 35: show room below
 		goto_other_room(3);
 	}
 	savekid();
