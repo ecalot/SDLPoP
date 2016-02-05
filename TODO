@@ -20,21 +20,21 @@ level 6: sword=true shadow=?
 	fork fall 7: sword=true shadow=false (using an alternate entrance)
 	fork door 7#: sword=true shadow=false
 level 7: sword=true shadow=?
+	yellow potion
 	different: green potion at the end right of the level
-	fork door 3+/26: sword=? shadow=false
-	si salto en level 6 aunque no haya shadow llego a este nivel
-	fork: if not shadow hay una potion verde en S14 que me permite llegar al otro extremo y continuar el nivel: sword=true shadow=false
+	fork door ???: sword=true shadow=false
+	fork door ???: sword=true shadow=false
 level 8: sword=true shadow=?
 level 9: sword=true shadow=?
-level 10:
-level 11:
-level 12:
-	merge "no sword"
+level 10: sword=true shadow=?
+level 11: sword=true shadow=?
+level 12: sword=true shadow=?
+	different: if no shadow the sword is there and a potion will create the tiles
 level 13:
 level 14:	princess
 level 15: 
 -----
-
+level 3*/16: (demo level) sword=true shadow=false
 
 
 
