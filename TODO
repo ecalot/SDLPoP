@@ -4,17 +4,24 @@
 level 1: sword=false shadow=false
 	fork variable: sword?
 level 2: sword=? shadow=false
-	fork: abajo guardia: path "no sword" 15 niveles (puede tenerla pero no necesitarla), desemboca en 12a cayendo donde cae la sombra. shadow=false sword=false
-	if sword:
+	yellow potion
+	different: under the first guard there is a breach
+	fork door 3+/26: sword=? shadow=false
+	fork door 3*/16: "sword": sword=true shadow=false
 level 3: sword=true shadow=false
 level 4: sword=true shadow=false
-	fork variable: shadow? (si atraviesa o no el espejo)
+	fork variable: shadow?
 level 5: sword=true shadow=?
-	if not shadow no aparece y no se roba nada
-	fork: al final continúa el nivel, la puerta se abre tirando un tile flojo en S13: path "the other way 1" sword=true shadow=?
+	special shadow event is cancelled if shadow=false
+	fork ???: sword=true shadow=?
+	different: S13 opener is linked to the room at the end of the level
 level 6: sword=true shadow=?
-	fork: en S1 si no hay shadow se puede acceder a la caja donde habrá un lose tile y se podrá subir para activar el mecanismo de la puerta y continuar el nivel: path "no shadow": sword=true shadow=false
+	different: if no shadow the S1 box is opened and the level is continued
+	fork fall 7: sword=true shadow=false (using an alternate entrance)
+	fork door 7#: sword=true shadow=false
 level 7: sword=true shadow=?
+	different: green potion at the end right of the level
+	fork door 3+/26: sword=? shadow=false
 	si salto en level 6 aunque no haya shadow llego a este nivel
 	fork: if not shadow hay una potion verde en S14 que me permite llegar al otro extremo y continuar el nivel: sword=true shadow=false
 level 8: sword=true shadow=?
