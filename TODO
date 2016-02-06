@@ -30,9 +30,9 @@ level 10: sword=true shadow=?
 level 11: sword=true shadow=?
 level 12: sword=true shadow=?
 	different: if no shadow the sword is there and a potion will create the tiles
-level 13:
-level 14:	princess
-level 15: 
+level 13: sword=true shadow=false
+level 14:	sword=true shadow=false
+level 15: X
 -----
 level 3*/16: (demo level) sword=true shadow=false
 
