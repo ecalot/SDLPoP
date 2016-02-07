@@ -156,9 +156,7 @@ printf("bye bye shadow\n");
 		#endif
 		draw_level_first();
 		show_copyprot(0);
-printf("LNi2=%d\n",current_level);
 		level_number = play_level_2();
-printf("LN=%d\n",level_number);
 		// hacked...
 #ifdef USE_COPYPROT
 		if (options.enable_copyprot && level_number == copyprot_level && !demo_mode) {

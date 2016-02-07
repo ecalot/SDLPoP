@@ -56,7 +56,7 @@ word current_replay_number = 0;
 byte* savestate_buffer = NULL;
 size_t savestate_offset = 0;
 size_t savestate_size = 0;
-#define MAX_SAVESTATE_SIZE 4096
+#define MAX_SAVESTATE_SIZE 16384
 
 // These are defined in seg000.c:
 typedef int process_func_type(void* data, size_t data_size);
