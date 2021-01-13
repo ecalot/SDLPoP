@@ -1654,6 +1654,17 @@ void __pascal far proc_get_object() {
 				text_time_total = 48;
 				text_time_remaining = 47;
 			break;
+			case 7: // time
+				stop_sounds();
+				play_sound(sound_30_big_potion); // using big potion sound
+				flash_color = color_15_white;
+				flash_time = 8;
+
+				rem_min += 15;
+				rem_min_anticheat += 15;
+
+				is_show_time = 1;
+			break;
 			case 4: // hurt
 				stop_sounds();
 				play_sound(sound_13_kid_hurt); // Kid hurt (by potion)

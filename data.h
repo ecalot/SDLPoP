@@ -54,6 +54,7 @@ extern word resurrect_time;
 extern word dont_reset_time;
 // data:4F7E
 extern word rem_min;
+extern word rem_min_anticheat;
 // data:4F82
 extern word rem_tick;
 // data:4608
@@ -450,7 +451,7 @@ extern short prev_char_col_left;
 extern short char_bottom_row;
 // data:3D34
 extern short guard_notice_timer;
-// data:42A0 
+// data:42A0
 extern short jumped_through_mirror;
 // data:2292
 extern const short y_clip[] INIT(= {-60, 3, 66, 129, 192});

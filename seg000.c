@@ -210,6 +210,12 @@ void __pascal far start_game() {
 		clear_screen_and_sounds();
 		longjmp(/*&*/setjmp_buf,-1);
 	}
+
+	// Forget permanent overrides
+	permanent_have_sword=-1;
+	permanent_have_shadow=-1;
+	rem_min_anticheat=0;
+
 	release_title_images(); // added
 	free_optsnd_chtab(); // added
 #ifdef USE_COPYPROT
@@ -793,7 +799,7 @@ void __pascal far play_frame() {
 		// Special event: level 12 running exit
 		if (Kid.room == 23) {
 			++next_level;
-// Sounds must be stopped, because play_level_2() checks next_level only if there are no sounds playing. 
+// Sounds must be stopped, because play_level_2() checks next_level only if there are no sounds playing.
 			stop_sounds();
 			seamless = 1;
 		}
@@ -1170,7 +1176,7 @@ void __pascal far read_joyst_control() {
 	// stub
 	if ((gamepad_states[0] == -1) || (joy_state == -1))
 		control_x = -1;
-	
+
 	if ((gamepad_states[0] == 1) || (joy_state == 1))
 		control_x = 1;
 
@@ -1530,18 +1536,18 @@ void __pascal far show_title() {
 	method_1_blit_rect(onscreen_surface_, offscreen_surface, &rect_titles, &rect_titles, blitters_0_no_transp);
 	draw_image_2(0 /*main title image*/, chtab_title50, 0, 0, blitters_0_no_transp);
 	do_wait(0);
-	
+
 	start_timer(timer_0,0x41);
 	method_1_blit_rect(onscreen_surface_, offscreen_surface, &rect_titles, &rect_titles, blitters_0_no_transp);
 	draw_image_2(0 /*main title image*/, chtab_title50, 0, 0, blitters_0_no_transp);
 	draw_image_2(2 /*a game by Jordan Mechner*/, chtab_title50, 96, 122, blitters_0_no_transp);
 	do_wait(0);
-	
+
 	start_timer(timer_0,0x10E);
 	method_1_blit_rect(onscreen_surface_, offscreen_surface, &rect_titles, &rect_titles, blitters_0_no_transp);
 	draw_image_2(0 /*main title image*/, chtab_title50, 0, 0, blitters_0_no_transp);
 	do_wait(0);
-	
+
 	start_timer(timer_0,0xEB);
 	method_1_blit_rect(onscreen_surface_, offscreen_surface, &rect_titles, &rect_titles, blitters_0_no_transp);
 	draw_image_2(0 /*main title image*/, chtab_title50, 0, 0, blitters_0_no_transp);
@@ -1563,9 +1569,9 @@ void __pascal far show_title() {
 	pop_wait(timer_0, 0x258);
 	fade_out_2(0x800);
 	release_title_images();
-	
+
 	load_intro(0, &pv_scene, 0);
-	
+
 	load_title_images(1);
 	current_target_surface = offscreen_surface;
 	draw_image_2(0 /*story frame*/, chtab_title40, 0, 0, blitters_0_no_transp);

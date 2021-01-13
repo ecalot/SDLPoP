@@ -22,6 +22,7 @@ The authors of this program may be contacted at http://forum.princed.org
 
 int permanent_have_sword=-1;
 int permanent_have_shadow=-1;
+word rem_min_anticheat=0;
 
 
 // data:3D1A
@@ -80,6 +81,7 @@ const cutscene_ptr_type tbl_cutscenes[TOTAL_LEVELS] = {
 void __pascal far play_level(int level_number) {
 	int auxiliar_entry=0;
 	cutscene_ptr_type cutscene_func;
+
 #ifdef USE_COPYPROT
 	if (options.enable_copyprot && level_number == copyprot_level) {
 		level_number = 15;
@@ -146,6 +148,14 @@ printf("bye bye shadow\n");
 			have_sword = (level_number != 1);
 		} else {
 			have_sword = permanent_have_sword;
+		}
+		/* reset the time gained by the time potion */
+		if (rem_min >= rem_min_anticheat) {
+			rem_min -= rem_min_anticheat;
+			rem_min_anticheat = 0;
+		} else { // Time has expired
+			rem_min = 0;
+			rem_tick = 0;
 		}
 		find_start_level_door();
 		// busy waiting?
@@ -397,6 +407,9 @@ int __pascal far play_level_2() {
 				//save permanent
 printf("ps=%d s=%d\n",permanent_have_sword,have_sword);
 				permanent_have_sword=have_sword;
+				/* next level means you've earned the potion time */
+				rem_min_anticheat = 0;
+
 				return next_level;
 			}
 		}
