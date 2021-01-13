@@ -174,7 +174,7 @@ chtab_type* __pascal load_sprites_from_file(int resource,int palette_bits, int q
 		if (quit_on_error) quit(1);
 		return NULL;
 	}
-	
+
 	dat_pal_type* pal_ptr = &shpl->palette;
 	if (graphics_mode == gmMcgaVga) {
 		if (palette_bits == 0) {
@@ -190,7 +190,7 @@ chtab_type* __pascal load_sprites_from_file(int resource,int palette_bits, int q
 		}
 		pal_ptr->row_bits = palette_bits;
 	}
-	
+
 	n_images = shpl->n_images;
 	size_t alloc_size = sizeof(chtab_type) + sizeof(void far *) * n_images;
 	chtab = (chtab_type*) malloc(alloc_size);
@@ -200,12 +200,12 @@ chtab_type* __pascal load_sprites_from_file(int resource,int palette_bits, int q
 		SDL_Surface* image = load_image(resource + i, pal_ptr);
 //		if (image == NULL) printf(" failed");
 		if (image != NULL) {
-			
+
 			if (SDL_SetSurfaceAlphaMod(image, 0) != 0) {
 				sdlperror("SDL_SetAlpha");
 				quit(1);
 			}
-			
+
 			/*
 			if (SDL_SetColorKey(image, SDL_SRCCOLORKEY, 0) != 0) {
 				sdlperror("SDL_SetColorKey");
@@ -1720,7 +1720,7 @@ void __pascal far play_digi_sound(sound_buffer_type far *buffer) {
 			printf("Warning: Ambiguous wave version.\n");
 			return;
 	}
-#ifndef USE_MIXER	
+#ifndef USE_MIXER
 	SDL_AudioCVT cvt;
 	memset(&cvt, 0, sizeof(cvt));
 	int result = SDL_BuildAudioCVT(&cvt,
@@ -1741,7 +1741,7 @@ void __pascal far play_digi_sound(sound_buffer_type far *buffer) {
 		sdlperror("SDL_ConvertAudio");
 		quit(1);
 	}
-	
+
 	SDL_LockAudio();
 	digi_buffer = cvt.buf;
 	digi_playing = 1;
@@ -1864,7 +1864,7 @@ void __pascal far set_gr_mode(byte grmode) {
 										  SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 										  pop_window_width, pop_window_height, flags);
 	renderer_ = SDL_CreateRenderer(window_, -1 , SDL_RENDERER_ACCELERATED );
-	
+
 	// Allow us to use a consistent set of screen co-ordinates, even if the screen size changes
 	if (options.use_correct_aspect_ratio) {
 		SDL_RenderSetLogicalSize(renderer_, 320*5, 200*6);
@@ -2157,7 +2157,7 @@ image_type far * __pascal far method_3_blit_mono(image_type far *image,int xpos,
     SDL_Surface* colored_image = SDL_ConvertSurfaceFormat(image, SDL_PIXELFORMAT_ARGB8888, 0);
 
     SDL_SetSurfaceBlendMode(colored_image, SDL_BLENDMODE_NONE);
-	if (SDL_SetColorKey(colored_image, SDL_TRUE, 0) != 0) {
+	if (SDL_SetColorKey(colored_image, 0, 0) != 0) {
 		sdlperror("SDL_SetColorKey");
 		quit(1);
 	}
@@ -2460,7 +2460,7 @@ void idle() {
 	// For instance, there may be simultaneous SDL2 KEYDOWN and TEXTINPUT events
 	do { // while there are still events to be processed
 		switch (event.type) {
-			case SDL_KEYDOWN: 
+			case SDL_KEYDOWN:
 			{
 				int modifier = event.key.keysym.mod;
 				int scancode = event.key.keysym.scancode;
@@ -2841,7 +2841,7 @@ int __pascal far fade_in_frame(palette_fade_type far *palette_buffer) {
 			set_pal_arr(start, 0x10, palette_buffer->faded_pal + start, (column++&3)==0);
 		}
 	}
-	
+
 	int h = offscreen_surface->h;
 	if (SDL_LockSurface(onscreen_surface_) != 0) {
 		sdlperror("SDL_LockSurface");
@@ -2871,7 +2871,7 @@ int __pascal far fade_in_frame(palette_fade_type far *palette_buffer) {
 
 	//SDL_UpdateRect(onscreen_surface_, 0, 0, 0, 0); // debug
 	request_screen_update();
-		
+
 	/**/do_simple_wait(1); // can interrupt fading of cutscene
 	//do_wait(timer_1); // can interrupt fading of main title
 	//printf("end ticks = %u\n",SDL_GetTicks());
@@ -2962,7 +2962,7 @@ int __pascal far fade_out_frame(palette_fade_type far *palette_buffer) {
 			set_pal_arr(start, 0x10, palette_buffer->faded_pal + start, (column++&3)==0);
 		}
 	}
-	
+
 	int h = offscreen_surface->h;
 	if (SDL_LockSurface(onscreen_surface_) != 0) {
 		sdlperror("SDL_LockSurface");
@@ -2991,7 +2991,7 @@ int __pascal far fade_out_frame(palette_fade_type far *palette_buffer) {
 	SDL_UnlockSurface(offscreen_surface);
 
 	request_screen_update();
-	
+
 	/**/do_simple_wait(1); // can interrupt fading of cutscene
 	//do_wait(timer_1); // can interrupt fading of main title
 	return var_8;
@@ -3101,4 +3101,3 @@ Uint32 GetUnscaledMouseState(int* x, int* y) {
 	*y = surface_y;
 	return result;
 }
-
