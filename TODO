@@ -36,6 +36,4 @@ level 15: X
 -----
 level 3*/16: (demo level) sword=true shadow=false
 
-
-
-
+merge: level 7 (from level 6* and level 6, no shadow) palace
