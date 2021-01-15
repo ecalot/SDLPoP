@@ -236,8 +236,13 @@ Mac OS X:
 		b) sudo port install libsdl2 libsdl2_image libsdl2_mixer
 	or
 		a) Install "homebrew"
+
+                Old versions:
 		b) brew install libsdl2 libsdl2_image
 		c) brew install sdl2_mixer --with-libvorbis
+
+                On catalina and above:
+                b) brew install sdl2 sdl2_image sdl2_mixer
 
 	Get development tools:
 		a) Install Xcode.
