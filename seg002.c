@@ -400,6 +400,7 @@ short __pascal far leave_room() {
 			}
 		break;
 	}
+	//TODO: execute hook yellow potion code
 	goto_other_room(leave_dir);
 	return leave_dir;
 }

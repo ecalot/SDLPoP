@@ -118,6 +118,9 @@ printf("TO FORK: level %d!=%d r%d pos %d,%d\n",level_number,current_level,Kid.ro
 printf("bye bye shadow\n");
 				permanent_have_shadow=0; /* the shadow will be off forever */
 			}
+
+			if (level_number==7 && current_level==6 && Kid.room==19) level_number=20; /* send the kid to a fork: 7* */
+
 			if (level_number==7 && current_level==6 && Kid.room==34) {
 				auxiliar_entry=1;
 			}
