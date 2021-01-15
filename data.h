@@ -129,7 +129,7 @@ extern byte* curr_room_modif;
 extern word draw_xh;
 
 // data:02B2
-extern /*const*/ byte tbl_level_type[TOTAL_LEVELS] INIT(= {0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1});
+extern /*const*/ byte tbl_level_type[TOTAL_LEVELS] INIT(= {0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1});
 // 1.3
 extern /*const*/ word tbl_level_color[TOTAL_LEVELS] INIT(= {0, 0, 0, 1, 0, 0, 0, 1, 2, 2, 0, 0, 3, 3, 4, 0});
 // data:0F9E
