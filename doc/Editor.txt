@@ -55,6 +55,10 @@ Alt-P: Save Palette.
 Alt-R: Revert level to latest saved version.
 Alt-S: Save level.
 
+A tile info mode
+
+T will sanitise torches. This will clear the bits 0110 0000 (0x60) so torches can contain more information.
+
 By pressing Shift the mouse pointer indicates where the characters will be placed. Using Ctrl-Alt door linking showing features are activated: Blue tiles are not linkable, red tiles are linkable (doors and buttons), the number displayed indicates how many links this tile has.
 
 The copied message:
@@ -74,4 +78,3 @@ TODO List/known bugs:
 * Selection using the palette S8 redrawn: add image with smaller palette and modifiers below
 * Automatic decoration of room.
 * Drag rooms/groups of rooms on map
-

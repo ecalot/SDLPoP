@@ -35,6 +35,9 @@ int __pascal far get_tile(int room,int col,int row) {
 		get_room_address(curr_room);
 		curr_tilepos = tbl_line[tile_row] + tile_col;
 		curr_tile2 = curr_room_tiles[curr_tilepos] & 0x1F;
+		// When torch, keep more info
+		if (curr_tile2 == tiles_19_torch)
+			curr_tile2 = curr_room_tiles[curr_tilepos] & 0x7F;
 	} else {
 		// wall in room 0
 		curr_tile2 = tiles_20_wall;
@@ -837,6 +840,7 @@ int __pascal far tile_is_floor(int tiletype) {
 		case tiles_27_lattice_small:
 		case tiles_28_lattice_left:
 		case tiles_29_lattice_right:
+		case tiles_19_torch_empty:
 			return 0;
 		default:
 			return 1;
@@ -1375,7 +1379,8 @@ int __pascal far can_grab() {
 	// can't grab through floor
 	if (tile_is_floor(through_tile)) return 0;
 	// can't grab a shaking loose floor
-	if (curr_tile2 == tiles_11_loose && modifier != 0) return 0;
+	if (curr_tile2 == tiles_11_loose && tlm_get_loose(modifier) != 0) return 0;
+	if (curr_tile2 == tiles_19_torch_with_loose_floor && tlm_get_loose(modifier) != 0) return 0;
 	// a doortop with floor can be grabbed only from the left (looking right)
 	if (curr_tile2 == tiles_7_doortop_with_floor && Char.direction < dir_0_right) return 0;
 	// can't grab something that has no floor
@@ -1452,7 +1457,8 @@ void __pascal far check_press() {
 		get_tile_above_char();
 	} else if (action == actions_7_turn || action == actions_5_bumped || action < actions_2_hang_climb) {
 		// frame 79: jumping up
-		if (frame == frame_79_jumphang && get_tile_above_char() == tiles_11_loose) {
+		int aux = get_tile_above_char();
+		if (frame == frame_79_jumphang && (aux == tiles_11_loose || aux == tiles_19_torch_with_loose_floor)) {
 			// break a loose floor from above
 			make_loose_fall(1);
 		} else {
@@ -1472,7 +1478,7 @@ void __pascal far check_press() {
 		} else {
 			died_on_button();
 		}
-	} else if (curr_tile2 == tiles_11_loose) {
+	} else if (curr_tile2 == tiles_11_loose || curr_tile2 == tiles_19_torch_with_loose_floor) {
 		is_guard_notice = 1;
 		make_loose_fall(1);
 	}

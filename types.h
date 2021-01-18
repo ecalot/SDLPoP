@@ -142,7 +142,9 @@ enum tiles {
 	tiles_27_lattice_small = 27,
 	tiles_28_lattice_left = 28,
 	tiles_29_lattice_right = 29,
-	tiles_30_torch_with_debris = 30
+	tiles_30_torch_with_debris = 30,
+  tiles_19_torch_empty = 19+32,
+  tiles_19_torch_with_loose_floor = 19+64
 };
 
 enum chtabs {
@@ -331,14 +333,14 @@ typedef struct objtable_type {
 
 typedef struct frame_type {
 	byte image;
-	
+
 	// 0x3F: sword image
 	// 0xC0: chtab
 	byte sword;
-	
+
 	sbyte dx;
 	sbyte dy;
-	
+
 	// 0x1F: weight x
 	// 0x20: thin
 	// 0x40: needs floor
@@ -1096,5 +1098,17 @@ void editor__on_refresh(surface_type* screen);
 extern word editor_enabled;
 extern word editor_active;
 #endif
+
+
+// torch and loose modifier:
+// 12 values for loose animation
+// 9 values for torch animation
+// 1 bit for "don't fall"
+// 216 values < 256 ok
+#define torch_loose_modifier(loose,torch,just_shake) (((loose)*9+(torch))*2+(just_shake))
+
+#define tlm_get_loose(tlm) ((tlm)/18)
+#define tlm_get_torch(tlm) (((tlm)/2)%9)
+#define tlm_get_just_shake(tlm) ((tlm)%2)
 
 #endif

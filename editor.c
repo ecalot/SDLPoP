@@ -1348,14 +1348,13 @@ void draw_ambiguous(surface_type* screen){
 		x=col*32;
 		y=row*63-10;
 
-		tile_packed_type tile=TP(edited,T(drawn_room,i));
+		tile_packed_type tile=TP((ambiguous_mode<=2?edited:level),T(drawn_room,i));
 
-		if (ambiguous_mode==2) {
+		if (ambiguous_mode>=2) {
 			draw_ambiguous_full(screen,tile,x,y);
 		} else { /* ambiguous_mode==2 or PALETTE_MODE */
 			draw_ambiguous_on(screen,tile,x,y);
 		}
-
 	}
 }
 
@@ -1893,8 +1892,8 @@ void editor__process_key(int key,const char** answer_text, word* need_show_text)
 		break;
 	case SDL_SCANCODE_A:
 		{
-		const char* am[]={"AMBIGUOUS MODE OFF","AMBIGUOUS MODE ON","AMBIGUOUS MODE FULL"};
-		ambiguous_mode=(ambiguous_mode+1)%3;
+		const char* am[]={"AMBIGUOUS MODE OFF","AMBIGUOUS MODE ON","AMBIGUOUS MODE FULL","AMBIGUOUS MODE CURRENT"};
+		ambiguous_mode=(ambiguous_mode+1)%4;
 		*answer_text=am[ambiguous_mode];
 		*need_show_text=1;
 		}
@@ -1964,6 +1963,19 @@ void editor__process_key(int key,const char** answer_text, word* need_show_text)
 			*need_show_text=1;
 		}
 		break;
+	case SDL_SCANCODE_T: {
+		int i;
+		editor__do_mark_start(flag_redraw|flag_remap);
+		for (i=0;i<30*NUMBER_OF_ROOMS;i++) {
+			unsigned char aux = edited.fg[i];
+			if ((aux & 0x1F) == tiles_19_torch)
+				editor__do(fg[i],aux & (~0x60),mark_middle);
+		}
+		editor__do_mark_end(flag_redraw|flag_remap);
+		snprintf(aux,50,"Torches sanitised");
+		*answer_text=aux;
+		*need_show_text=1;
+		break;}
 	case SDL_SCANCODE_TAB:
 		editor__guard_toggle();
 		Guard.direction=~Guard.direction; /* synch */

@@ -713,7 +713,7 @@ void __pascal far guard_follows_kid_down() {
 		(! tile_is_floor(curr_tile2) && (
 			(get_tile(curr_room, tile_col, ++tile_row) == tiles_2_spike ||
 			// Guard would fall on loose floor
-			curr_tile2 == tiles_11_loose ||
+			curr_tile2 == tiles_11_loose || curr_tile2 == tiles_19_torch_with_loose_floor ||
 			// ... or wall (?)
 			wall_type(curr_tile2) != 0 ||
 			// ... or into a chasm

@@ -24,7 +24,7 @@ The authors of this program may be contacted at http://forum.princed.org
 add_table_type ptr_add_table = add_backtable;
 
 // data:259C
-const piece tile_table[31] = {
+const piece tile_table[33] = {
 {   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0}, // 0x00 empty
 {  41,   1,   0,  42,   1,   2, 145,   0,  43,   0,   0,   0}, // 0x01 floor
 { 127,   1,   0, 133,   1,   2, 145,   0,  43,   0,   0,   0}, // 0x02 spike
@@ -56,7 +56,13 @@ const piece tile_table[31] = {
 {   4,   0, -10,   0,   0,   0,   0,   0,   0,   9,   0, -53}, // 0x1C lattice left
 {   5,   0, -10,   0,   0,   0,   0,   0,   0,   9,   0, -53}, // 0x1D lattice right
 {  97,   1,   0,  98,   1,   2,   0,   0,  43, 100,   0,   0}, // 0x1E debris with torch
+
+{   0,   0,   0,   0,   1,   2,   0,   0,   0,   0,   0,   0}, // tiles_19_torch_empty
+{  41,   1,   0,   0,   1,   2, 145,   0,   0,   0,   0,   0}, // tiles_19_torch_with_loose_floor
 };
+
+#define get_tile_table(val) (val==tiles_19_torch_empty?tile_table[31]:(val==tiles_19_torch_with_loose_floor?tile_table[32]:tile_table[val]))
+
 
 // data:4334
 short drawn_row;
@@ -236,6 +242,9 @@ int __pascal far get_tile_to_draw(int room, int column, int row, byte *ptr_tilet
 		*ptr_modifier = leftroom_[row].modifier;
 	} else if (room) {
 		*ptr_tiletype = curr_room_tiles[tilepos] & 0x1F;
+		// When torch, keep more info
+		if (*ptr_tiletype == tiles_19_torch)
+			*ptr_tiletype = curr_room_tiles[tilepos] & 0x7F;
 		*ptr_modifier = curr_room_modif[tilepos];
 	} else {
 		*ptr_modifier = 0;
@@ -244,6 +253,10 @@ int __pascal far get_tile_to_draw(int room, int column, int row, byte *ptr_tilet
 	// Is this a pressed button?
 	byte tiletype = (*ptr_tiletype) & 0x1F;
 	byte modifier = *ptr_modifier;
+
+	if (tiletype == tiles_19_torch)
+		tiletype = (*ptr_tiletype) & 0x7F;
+
 	if (tiletype == tiles_6_closer) {
 		if (get_doorlink_timer(modifier) > 1) {
 			*ptr_tiletype = tiles_5_stuck;
@@ -387,13 +400,14 @@ void __pascal far load_rowbelow() {
 void __pascal far draw_tile_floorright() {
 	if (can_see_bottomleft() == 0) return;
 	draw_tile_topright();
-	if (tile_table[tile_left].floor_right == 0) return;
+	if (get_tile_table(tile_left).floor_right == 0) return;
 	add_backtable(id_chtab_6_environment, 42 /*floor right part*/, draw_xh, 0, tile_table[tiles_1_floor].right_y + draw_main_y, blitters_9_black, 1);
 }
 
 // seg008:053A
 int __pascal far can_see_bottomleft() {
 	return curr_tile == tiles_0_empty ||
+		curr_tile == tiles_19_torch_empty ||
 		curr_tile == tiles_9_bigpillar_top ||
 		curr_tile == tiles_12_doortop ||
 		curr_tile == tiles_26_lattice_down;
@@ -411,7 +425,7 @@ void __pascal far draw_tile_topright() {
 	} else if (tiletype == tiles_20_wall) {
 		add_backtable(id_chtab_7_environmentwall, 2, draw_xh, 0, draw_bottom_y, blitters_2_or, 0);
 	} else {
-		add_backtable(id_chtab_6_environment, tile_table[tiletype].topright_id, draw_xh, 0, draw_bottom_y, blitters_2_or, 0);
+		add_backtable(id_chtab_6_environment, get_tile_table(tiletype).topright_id, draw_xh, 0, draw_bottom_y, blitters_2_or, 0);
 	}
 }
 
@@ -421,6 +435,7 @@ const byte door_fram_top[] = {60, 61, 62, 63, 64, 65, 66, 67};
 void __pascal far draw_tile_anim_topright() {
 	word modifier;
 	if (	(curr_tile == tiles_0_empty ||
+		curr_tile == tiles_19_torch_empty ||
 		curr_tile == tiles_9_bigpillar_top ||
 		curr_tile == tiles_12_doortop)
 		&& row_below_left_[drawn_col].tiletype == tiles_4_gate
@@ -445,22 +460,22 @@ void __pascal far draw_tile_right() {
 	if (curr_tile == tiles_20_wall) return;
 	switch (tile_left) {
 		default:
-			id = tile_table[tile_left].right_id;
+			id = get_tile_table(tile_left).right_id;
 			if (id) {
 				if (tile_left == tiles_5_stuck) {
 					blit = blitters_10h_transp;
-					if (curr_tile == tiles_0_empty || curr_tile == tiles_5_stuck) {
+					if (curr_tile == tiles_0_empty || curr_tile == tiles_19_torch_empty || curr_tile == tiles_5_stuck) {
 						id = 42; /*floor B*/
 					}
 				} else {
 					blit = blitters_2_or;
 				}
-				add_backtable(id_chtab_6_environment, id, draw_xh, 0, tile_table[tile_left].right_y + draw_main_y, blit, 0);
+				add_backtable(id_chtab_6_environment, id, draw_xh, 0, get_tile_table(tile_left).right_y + draw_main_y, blit, 0);
 			}
 			if (tbl_level_type[current_level] != 0) {
-				add_backtable(id_chtab_6_environment, tile_table[tile_left].stripe_id, draw_xh, 0, draw_main_y - 27, blitters_2_or, 0);
+				add_backtable(id_chtab_6_environment, get_tile_table(tile_left).stripe_id, draw_xh, 0, draw_main_y - 27, blitters_2_or, 0);
 			}
-			if (tile_left == tiles_19_torch || tile_left == tiles_30_torch_with_debris) {
+			if ((tile_left & 0x1F) == tiles_19_torch || tile_left == tiles_30_torch_with_debris ) {
 				add_backtable(id_chtab_6_environment, 146 /*torch base*/, draw_xh, 0, draw_bottom_y - 28, blitters_0_no_transp, 0);
 			}
 			break;
@@ -469,7 +484,7 @@ void __pascal far draw_tile_right() {
 			add_backtable(id_chtab_6_environment, blueline_fram1[modifier_left], draw_xh, 0, blueline_fram_y[modifier_left] + draw_main_y, blitters_2_or, 0);
 			break;
 		case tiles_1_floor:
-			ptr_add_table(id_chtab_6_environment, 42 /*floor B*/, draw_xh, 0, tile_table[tile_left].right_y + draw_main_y, blitters_10h_transp, 0);
+			ptr_add_table(id_chtab_6_environment, 42 /*floor B*/, draw_xh, 0, get_tile_table(tile_left).right_y + draw_main_y, blitters_10h_transp, 0);
 			var_2 = modifier_left;
 			if (var_2 > 3) var_2 = 0;
 			if (var_2 == !!tbl_level_type[current_level]) return;
@@ -478,13 +493,13 @@ void __pascal far draw_tile_right() {
 		case tiles_7_doortop_with_floor:
 		case tiles_12_doortop:
 			if (tbl_level_type[current_level] == 0) return;
-			add_backtable(id_chtab_6_environment, doortop_fram_bot[modifier_left], draw_xh, 0, tile_table[tile_left].right_y + draw_main_y, blitters_2_or, 0);
+			add_backtable(id_chtab_6_environment, doortop_fram_bot[modifier_left], draw_xh, 0, get_tile_table(tile_left).right_y + draw_main_y, blitters_2_or, 0);
 			break;
 		case tiles_20_wall:
 			if (tbl_level_type[current_level] && (modifier_left & 0x80) == 0) {
 				add_backtable(id_chtab_6_environment, 84 /*wall stripe*/, draw_xh + 3, 0, draw_main_y - 27, blitters_0_no_transp, 0);
 			}
-			add_backtable(id_chtab_7_environmentwall, 1, draw_xh, 0, tile_table[tile_left].right_y + draw_main_y, blitters_2_or, 0);
+			add_backtable(id_chtab_7_environmentwall, 1, draw_xh, 0, get_tile_table(tile_left).right_y + draw_main_y, blitters_2_or, 0);
 			break;
 	}
 }
@@ -516,12 +531,13 @@ void __pascal far draw_tile_anim_right() {
 		case tiles_16_level_door_left:
 			draw_leveldoor();
 		break;
+		case tiles_19_torch_with_loose_floor:
+			add_backtable(id_chtab_6_environment, loose_fram_right[get_loose_frame(modifier_left)], draw_xh, 0, draw_bottom_y - 1, blitters_2_or, 0);
 		case tiles_19_torch:
 		case tiles_30_torch_with_debris:
-			if (modifier_left < 9) {
-				// images 1..9 are the flames
-				add_backtable(id_chtab_1_flameswordpotion, modifier_left + 1, draw_xh + 1, 0, draw_main_y - 40, blitters_0_no_transp, 0);
-			}
+		case tiles_19_torch_empty:
+			// images 1..9 are the flames
+			add_backtable(id_chtab_1_flameswordpotion, tlm_get_torch(modifier_left) + 1, draw_xh + 1, 0, draw_main_y - 40, blitters_0_no_transp, 0);
 		break;
 	}
 }
@@ -547,7 +563,7 @@ void __pascal far draw_tile_bottom(word arg_0) {
 			blit = blitters_2_or;
 			// fallthrough!
 		default:
-			id = tile_table[curr_tile].bottom_id;
+			id = get_tile_table(curr_tile).bottom_id;
 			break;
 	}
 	if (ptr_add_table(chtab_id, id, draw_xh, 0, draw_bottom_y, blit, 0) && arg_0) {
@@ -563,7 +579,7 @@ const byte loose_fram_bottom[] = {43, 73, 43, 74, 74, 43, 43, 43, 74, 74, 74, 0}
 // seg008:0A38
 void __pascal far draw_loose(int arg_0) {
 	word id;
-	if (curr_tile == tiles_11_loose) {
+	if (curr_tile == tiles_11_loose || curr_tile == tiles_19_torch_with_loose_floor) {
 		id = loose_fram_bottom[get_loose_frame(curr_modifier)];
 		add_backtable(id_chtab_6_environment, id, draw_xh, 0, draw_bottom_y, blitters_0_no_transp, 0);
 		add_foretable(id_chtab_6_environment, id, draw_xh, 0, draw_bottom_y, blitters_0_no_transp, 0);
@@ -580,14 +596,14 @@ void __pascal far draw_tile_base() {
 	if (tile_left == tiles_26_lattice_down && curr_tile == tiles_12_doortop) {
 		id = 6; // Lattice + door A
 		ybottom += 3;
-	} else if (curr_tile == tiles_11_loose) {
+	} else if (curr_tile == tiles_11_loose || curr_tile == tiles_19_torch_with_loose_floor) {
 		id = loose_fram_left[get_loose_frame(curr_modifier)];
 	} else if (curr_tile == tiles_15_opener && tile_left == tiles_0_empty && tbl_level_type[current_level] == 0) {
 		id = 148; // left half of open button with floor to the left
 	} else {
-		id = tile_table[curr_tile].base_id;
+		id = get_tile_table(curr_tile).base_id;
 	}
-	ptr_add_table(id_chtab_6_environment, id, draw_xh, 0, tile_table[curr_tile].base_y + ybottom, blitters_10h_transp, 0);
+	ptr_add_table(id_chtab_6_environment, id, draw_xh, 0, get_tile_table(curr_tile).base_y + ybottom, blitters_10h_transp, 0);
 }
 
 const byte spikes_fram_left[] = {0, 128, 129, 130, 131, 132, 131, 129, 128, 0};
@@ -690,7 +706,7 @@ void __pascal far draw_tile_fore() {
 			}
 			break;
 		default:
-			id = tile_table[curr_tile].fore_id;
+			id = get_tile_table(curr_tile).fore_id;
 			if (id == 0) return;
 			if (curr_tile == tiles_10_potion) {
 				// large pots are drawn for potion types 2, 3, 4 and now 6
@@ -698,14 +714,15 @@ void __pascal far draw_tile_fore() {
 				if (potion_type < 5 && potion_type >= 2) id = 13; // small pot = 12, large pot = 13
 				if (potion_type==6 || potion_type==8) id = 13;
 			}
-			xh = tile_table[curr_tile].fore_x + draw_xh;
-			ybottom = tile_table[curr_tile].fore_y + draw_main_y;
+			xh = get_tile_table(curr_tile).fore_x + draw_xh;
+			ybottom = get_tile_table(curr_tile).fore_y + draw_main_y;
 			if (curr_tile == tiles_10_potion) {
 				// potions look different in the dungeon and the palace
 				if (tbl_level_type[current_level] != 0) id += 2;
 				add_foretable(id_chtab_1_flameswordpotion, id, xh, 6, ybottom, blitters_10h_transp, 0);
 			} else {
-				if ((curr_tile == tiles_3_pillar && tbl_level_type[current_level] == 0) || (curr_tile >= tiles_27_lattice_small && curr_tile < tiles_30_torch_with_debris)) {
+				if ((curr_tile == tiles_3_pillar && tbl_level_type[current_level] == 0) ||
+						(curr_tile >= tiles_27_lattice_small && curr_tile < tiles_30_torch_with_debris)) {
 					add_foretable(id_chtab_6_environment, id, xh, 0, ybottom, blitters_0_no_transp, 0);
 				} else {
 					add_foretable(id_chtab_6_environment, id, xh, 0, ybottom, blitters_10h_transp, 0);
@@ -717,13 +734,9 @@ void __pascal far draw_tile_fore() {
 
 // seg008:0FF6
 int __pascal far get_loose_frame(byte modifier) {
-	if (modifier & 0x80) {
-		modifier &= 0x7F;
-		if (modifier > 10) {
-			return 1;
-		}
-	}
-	return modifier;
+	int aux=tlm_get_loose(modifier);
+	if (tlm_get_just_shake(modifier) && aux>10) return 1;
+	return aux;
 }
 
 // Get an image, with index and NULL checks.
@@ -1158,6 +1171,9 @@ void __pascal far load_alter_mod(int tilepos) {
 				*curr_tile_modif = 0;
 			}
 			break;
+		case tiles_19_torch:
+			if ((curr_room_tiles[tilepos] & 0x7F) != tiles_19_torch_with_loose_floor)
+				break;
 		case tiles_11_loose:
 			*curr_tile_modif = 0;
 			break;
@@ -1217,7 +1233,7 @@ void __pascal far load_alter_mod(int tilepos) {
             #define WALL_CONNECTION_CONDITION (								   										  \
 				(adj_tile == tiles_20_wall && adj_tile_modif != 4 && (adj_tile_modif >> 4) != 4 && 				 	  \
 							 adj_tile_modif != 6 && (adj_tile_modif >> 4) != 6) ||			 						  \
-				(adj_tile == tiles_0_empty && (adj_tile_modif == 5 || adj_tile_modif == 13 ||						  \
+				((adj_tile == tiles_0_empty || adj_tile == tiles_19_torch_empty) && (adj_tile_modif == 5 || adj_tile_modif == 13 ||						  \
 							 (adj_tile_modif >= 50 && adj_tile_modif <= 53))) || 									  \
 				(adj_tile == tiles_1_floor && (adj_tile_modif == 5 || adj_tile_modif == 13 ||						  \
 							 (adj_tile_modif >= 50 && adj_tile_modif <= 53))))
@@ -1446,7 +1462,7 @@ void __pascal far draw_floor_overlay() {
 void __pascal far draw_other_overlay() {
 	byte tiletype;
 	byte modifier;
-	if (tile_left == tiles_0_empty) {
+	if (tile_left == tiles_0_empty || tile_left == tiles_19_torch_empty) {
 		ptr_add_table = &add_midtable;
 		draw_tile2();
 	} else if (curr_tile != tiles_0_empty && drawn_col > 0 &&

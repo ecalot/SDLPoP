@@ -787,7 +787,8 @@ void __pascal far draw_sword() {
 void __pascal far control_with_sword() {
 	short distance;
 	if (Char.action < actions_2_hang_climb) {
-		if (get_tile_at_char() == tiles_11_loose || can_guard_see_kid >= 2) {
+		int aux=get_tile_at_char();
+		if (aux == tiles_19_torch_with_loose_floor || aux == tiles_11_loose || can_guard_see_kid >= 2) {
 			distance = char_opp_dist();
 			if ((word)distance < (word)90) {
 				swordfight();

@@ -670,6 +670,7 @@ Possible results in can_guard_see_kid:
 				}
 				// Can see through these, but won't go through them.
 				if (curr_tile2 == tiles_11_loose ||
+					curr_tile2 == tiles_19_torch_with_loose_floor ||
 					curr_tile2 == tiles_18_chomper ||
 					(curr_tile2 == tiles_4_gate && curr_room_modif[curr_tilepos] < 112) ||
 					!tile_is_floor(curr_tile2)

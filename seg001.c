@@ -492,12 +492,30 @@ short princess_torch_pos_xl[] = {5, 3};
 // data:0DFC
 short princess_torch_frame[] = {1, 6};
 
+
+short __pascal far get_torch_frame_princess(short curr) {
+	short next;
+	next = prandom(255);
+	if (next != curr) {
+		if (next < 9) {
+			return next;
+		} else {
+			next = curr;
+		}
+	}
+	++next;
+	if (next >= 9) next = 0;
+	return next;
+}
+
+
+
 // seg001:0808
 void __pascal far princess_room_torch() {
 	short which;
 	for (which = 2; which--; ) {
 		which_torch = !which_torch;
-		princess_torch_frame[which_torch] = get_torch_frame(princess_torch_frame[which_torch]);
+		princess_torch_frame[which_torch] = get_torch_frame_princess(princess_torch_frame[which_torch]);
 		add_backtable(id_chtab_1_flameswordpotion, princess_torch_frame[which_torch] + 1, princess_torch_pos_xh[which_torch], princess_torch_pos_xl[which_torch], 116, 0, 0);
 	}
 }
@@ -658,12 +676,12 @@ void __pascal far load_intro(int which_imgs,cutscene_ptr_type func,int free_soun
 	current_target_surface = offscreen_surface;
 	method_6_blit_img_to_scr(chtab_addrs[id_chtab_8_princessroom]->images[0], 0, 0, 0);
 	method_6_blit_img_to_scr(chtab_addrs[id_chtab_9_princessbed]->images[0], 0, 142, blitters_2_or);
-	
+
 	// Free the images that are not needed anymore.
 	free_all_chtabs_from(id_chtab_9_princessbed);
 	SDL_FreeSurface(chtab_addrs[id_chtab_8_princessroom]->images[0]);
 	chtab_addrs[id_chtab_8_princessroom]->images[0] = NULL;
-	
+
 	load_chtab_from_file(id_chtab_3_princessinstory, 800, "PV.DAT", 1<<9);
 	load_chtab_from_file(id_chtab_4_jaffarinstory_princessincutscenes,
                          50*which_imgs + 850, "PV.DAT", 1<<10);

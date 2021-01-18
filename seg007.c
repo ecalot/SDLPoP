@@ -49,9 +49,14 @@ void __pascal far process_trobs() {
 void __pascal far animate_tile() {
 	get_room_address(trob.room);
 	switch (get_curr_tile(trob.tilepos)) {
+		case tiles_19_torch_with_loose_floor:
+			if (trob.type != 40)
+				animate_loose();
 		case tiles_19_torch:
 		case tiles_30_torch_with_debris:
-			animate_torch();
+		case tiles_19_torch_empty:
+			if (trob.type == 40)
+				animate_torch();
 		break;
 		case tiles_6_closer:
 		case tiles_15_opener:
@@ -249,6 +254,10 @@ void __pascal far animate_torch() {
 	if (is_trob_in_drawn_room()) {
 		curr_modifier = get_torch_frame(curr_modifier);
 		set_redraw_anim_right();
+		//redraw_10h();
+		redraw_height = 0x10;
+		redraw_tile_height();
+
 	}
 }
 
@@ -470,17 +479,22 @@ short __pascal far bubble_next_frame(short curr) {
 // seg007:06CD
 short __pascal far get_torch_frame(short curr) {
 	short next;
+	int l,t,d;
+	l = tlm_get_loose(curr);
+	t = tlm_get_torch(curr);
+	d = tlm_get_just_shake(curr);
+
 	next = prandom(255);
-	if (next != curr) {
+	if (next != t) {
 		if (next < 9) {
-			return next;
+			return torch_loose_modifier(l,next,d);
 		} else {
-			next = curr;
+			next = t;
 		}
 	}
 	++next;
 	if (next >= 9) next = 0;
-	return next;
+	return torch_loose_modifier(l,next,d);
 }
 
 // seg007:070A
@@ -558,8 +572,9 @@ void __pascal far set_wipe(short tilepos, byte frames) {
 
 // seg007:081E
 void __pascal far start_anim_torch(short room,short tilepos) {
-	curr_room_modif[tilepos] = prandom(8);
-	add_trob(room, tilepos, 1);
+	int curr=curr_room_modif[tilepos];
+	curr_room_modif[tilepos] = torch_loose_modifier(tlm_get_loose(curr),prandom(8),tlm_get_just_shake(curr));
+	add_trob(room, tilepos, 40);
 }
 
 // seg007:0847
@@ -676,7 +691,9 @@ void __pascal far add_trob(byte room,byte tilepos,sbyte type) {
 	trob.room = room;
 	trob.tilepos = tilepos;
 	trob.type = type;
-	found = find_trob();
+
+	found = (type == 40)?-1:find_trob(); // don't search for torches, always add
+
 	if (found == -1) {
 		// add new
 		if (trobs_count == 30) return;
@@ -692,7 +709,13 @@ short __pascal far find_trob() {
 	short index;
 	for (index = 0; index < trobs_count; ++index) {
 		if (trobs[index].tilepos == trob.tilepos &&
-			trobs[index].room == trob.room) return index;
+			trobs[index].room == trob.room &&
+			(
+				(trob.type != 40 && trobs[index].type != 40)
+				 ||
+				(trob.type == 40 && trobs[index].type == 40)
+			)
+		) return index;
 	}
 	return -1;
 }
@@ -837,22 +860,32 @@ void __pascal far animate_loose() {
 	word row;
 	word tilepos;
 	short anim_type;
+
+	int l,t,just_shake;
+	l = tlm_get_loose(curr_modifier);
+	t = tlm_get_torch(curr_modifier);
+	just_shake = tlm_get_just_shake(curr_modifier);
+
 	anim_type = trob.type;
+	if (anim_type == 40) return; // This is just a torch, ignore
+
 	if (anim_type >= 0) {
-		++curr_modifier;
-		if (curr_modifier & 0x80) {
+		++l;
+		curr_modifier=torch_loose_modifier(l,t,just_shake);
+		if (just_shake) {
 			// just shaking
 			// don't shake on level 13
 			if (current_level == 13) return;
-			if (curr_modifier >= 0x84) {
-				curr_modifier = 0;
+			if (l >= 4) {
+				l=0;
+				curr_modifier=torch_loose_modifier(0,t,0);
 				trob.type = -1;
 			}
-			loose_shake(!curr_modifier);
+			loose_shake(!l);
 		} else {
 			// something is on the floor
 			// should it fall already?
-			if (curr_modifier >= 11) {
+			if (l >= 11) {
 				curr_modifier = remove_loose(room = trob.room, tilepos = trob.tilepos);
 				trob.type = -1;
 				curmob.xh = (tilepos % 10) << 2;
@@ -876,7 +909,7 @@ const byte loose_sound[] = {0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0};
 // seg007:0E55
 void __pascal far loose_shake(int arg_0) {
 	word sound_id;
-	if (arg_0 || loose_sound[curr_modifier & 0x7F]) {
+	if (arg_0 || loose_sound[tlm_get_loose(curr_modifier)]) {
 		do {
 			// Sounds 20,21,22: loose floor shaking
 			sound_id = prandom(2) + sound_20_loose_shake_1;
@@ -892,17 +925,28 @@ void __pascal far loose_shake(int arg_0) {
 
 // seg007:0EB8
 int __pascal far remove_loose(int room, int tilepos) {
-	curr_room_tiles[tilepos] = tiles_0_empty;
-	// note: the level type is used to determine the modifier of the empty space left behind
-	return tbl_level_type[current_level];
+	switch (curr_room_tiles[tilepos] & 0x7F) {
+	case tiles_19_torch_with_loose_floor:
+		curr_room_tiles[tilepos] = tiles_19_torch_empty;
+		return curr_modifier; // keep the modifier, loose data will be ignored.
+	case tiles_11_loose:
+		curr_room_tiles[tilepos] = tiles_0_empty;
+		// note: the level type is used to determine the modifier of the empty space left behind
+		return tbl_level_type[current_level];
+	default: // Should never happen
+		return 0;
+	}
 }
 
 // seg007:0ED5
-void __pascal far make_loose_fall(byte modifier) {
+void __pascal far make_loose_fall(byte loose_time) {
 	// is it a "solid" loose floor?
 	if ((curr_room_tiles[curr_tilepos] & 0x20) == 0) {
-		if ((sbyte)curr_room_modif[curr_tilepos] <= 0) {
-			curr_room_modif[curr_tilepos] = modifier;
+		if (tlm_get_just_shake(curr_room_modif[curr_tilepos]) || tlm_get_loose(curr_room_modif[curr_tilepos])==0) {
+			int t,just_shake;
+			t = tlm_get_torch(curr_modifier);
+			just_shake = tlm_get_just_shake(curr_modifier);
+			curr_room_modif[curr_tilepos] = torch_loose_modifier(loose_time,t,just_shake);
 			add_trob(curr_room, curr_tilepos, 0);
 			redraw_20h();
 		}
@@ -944,8 +988,9 @@ int __pascal far next_chomper_timing(byte timing) {
 
 // seg007:0FB4
 void __pascal far loose_make_shake() {
-	if (curr_room_modif[curr_tilepos] == 0 && current_level != 13) {
-		curr_room_modif[curr_tilepos] = 0x80;
+	int aux=curr_room_modif[curr_tilepos];
+	if (tlm_get_loose(aux) == 0 && tlm_get_just_shake(aux) == 0 && current_level != 13) {
+		curr_room_modif[curr_tilepos] = torch_loose_modifier(0,tlm_get_torch(aux),1);
 		add_trob(curr_room, curr_tilepos, 1);
 	}
 }
@@ -954,7 +999,8 @@ void __pascal far loose_make_shake() {
 void __pascal far do_knock(int room,int tile_row) {
 	short tile_col;
 	for (tile_col = 0; tile_col < 10; ++tile_col) {
-		if (get_tile(room, tile_col, tile_row) == tiles_11_loose) {
+		int aux = get_tile(room, tile_col, tile_row);
+		if (aux == tiles_11_loose || aux == tiles_19_torch_with_loose_floor) {
 			loose_make_shake();
 		}
 	}
@@ -972,7 +1018,10 @@ void __pascal far add_mob() {
 // seg007:1041
 short __pascal far get_curr_tile(short tilepos) {
 	curr_modifier = curr_room_modif[tilepos];
-	return curr_tile = curr_room_tiles[tilepos] & 0x1F; 
+	curr_tile = curr_room_tiles[tilepos] & 0x1F;
+	if (curr_tile == tiles_19_torch)
+		curr_tile = curr_room_tiles[tilepos] & 0x7F;
+	return curr_tile;
 }
 
 // data:43DC
@@ -1029,11 +1078,13 @@ void __pascal far move_loose() {
 	if (curmob.y < 226 && y_something[curmob.row + 1] <= curmob.y) {
 		// fell into a different row
 		curr_tile_temp = get_tile(curmob.room, curmob.xh >> 2, curmob.row);
-		if (curr_tile_temp == tiles_11_loose) {
+		if (curr_tile_temp == tiles_11_loose || curr_tile_temp == tiles_19_torch_with_loose_floor) {
 			loose_fall();
 		}
 		if (curr_tile_temp == tiles_0_empty ||
-			curr_tile_temp == tiles_11_loose
+			curr_tile_temp == tiles_11_loose ||
+			curr_tile_temp == tiles_19_torch_empty ||
+			curr_tile_temp == tiles_19_torch_with_loose_floor
 		) {
 			mob_down_a_row();
 			return;

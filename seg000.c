@@ -895,6 +895,8 @@ void __pascal far anim_tile_modif() {
 			break;
 			case tiles_19_torch:
 			case tiles_30_torch_with_debris:
+			case tiles_19_torch_empty:
+			case tiles_19_torch_with_loose_floor:
 				start_anim_torch(drawn_room, tilepos);
 			break;
 			case tiles_22_sword:
