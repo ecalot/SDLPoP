@@ -457,6 +457,9 @@ Possible values of trob_type:
 						// Special event: place mirror
 						get_tile(4, 4, 0);
 						curr_room_tiles[curr_tilepos] = tiles_13_mirror;
+						// And set loose tile
+						get_tile(24, 1, 1);
+						curr_room_tiles[curr_tilepos] = tiles_19_torch_with_loose_floor;
 					}
 				}
 			} else {
