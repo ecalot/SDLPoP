@@ -412,7 +412,7 @@ extern const short y_land[] INIT(= {-8, 55, 118, 181, 244});
 // data:03D4
 extern /*const*/ short tbl_guard_type[TOTAL_LEVELS] INIT(= {0, 0, 0, 2, 0, 0, 1, 0, 0, 0, 0, 0, 4, 3, -1, 0,0,0});
 // data:0EDA
-extern /*const*/ byte tbl_guard_hp[TOTAL_LEVELS] INIT(= {4, 3, 3, 3, 3, 4, 5, 4, 4, 5, 5, 5, 4, 6, 0, 0,4,3,3,4});
+extern /*const*/ byte tbl_guard_hp[TOTAL_LEVELS] INIT(= {4, 3, 3, 3, 3, 4, 5, 4, 4, 5, 5, 5, 4, 6, 0, 0,4,3,3,4,4,4,5,5,5,4,5,4,5,4,5,4,4,4});
 // data:5888
 extern word curr_guard_color;
 // data:288C
