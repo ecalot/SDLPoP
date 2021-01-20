@@ -34,6 +34,12 @@ The authors of this program may be contacted at http://forum.princed.org
 // This macro is from SDL_types.h.
 // It is #undefined at the end of that file, even though it can be useful outside that file.
 /* Make sure the types really have the right sizes */
+
+#ifdef SDL_COMPILE_TIME_ASSERT
+#undef SDL_COMPILE_TIME_ASSERT
+#endif
+
+
 #define SDL_COMPILE_TIME_ASSERT(name, x)               \
        typedef int SDL_dummy_ ## name[(x) * 2 - 1]
 
