@@ -23,6 +23,7 @@ The authors of this program may be contacted at http://forum.princed.org
 int permanent_have_sword=-1;
 int permanent_have_shadow=-1;
 word rem_min_anticheat=0;
+int auxiliar_entry;
 
 
 // data:3D1A
@@ -79,8 +80,8 @@ const cutscene_ptr_type tbl_cutscenes[TOTAL_LEVELS] = {
 
 // seg003:005C
 void __pascal far play_level(int level_number) {
-	int auxiliar_entry=0;
 	cutscene_ptr_type cutscene_func;
+	auxiliar_entry=0;
 
 #ifdef USE_COPYPROT
 	if (options.enable_copyprot && level_number == copyprot_level) {
@@ -119,7 +120,10 @@ printf("bye bye shadow\n");
 				permanent_have_shadow=0; /* the shadow will be off forever */
 			}
 
-			if (level_number==7 && current_level==6 && Kid.room==19) level_number=20; /* send the kid to a fork: 7* */
+			if (level_number==7 && current_level==6 && Kid.room==19) {
+				level_number=20; /* send the kid to a fork: 7* */
+				auxiliar_entry=1;
+			}
 
 			if (level_number==7 && current_level==6 && Kid.room==34) {
 				auxiliar_entry=1;
@@ -206,6 +210,11 @@ void __pascal far do_startpos(int aux) {
 		//curr_room_tiles[curr_tilepos] = tiles_1_floor;
 		seqtbl_offset_char(seq_7_fall); // fall
 	}
+	if (current_level == 20 && aux) { // level 7* use the other door
+		level.start_pos = 17;
+		//auxiliar_entry == 0 -> tilepos == 11+1=12
+		//auxiliar_entry == 1 -> tilepos == 16+1=17
+	}
 	next_room = Char.room = level.start_room;
 	x = level.start_pos;
 	Char.curr_col = x % 10;
@@ -270,6 +279,11 @@ void __pascal far find_start_level_door() {
 	get_room_address(Kid.room);
 	for (tilepos = 0; tilepos < 30; ++tilepos) {
 		if ((curr_room_tiles[tilepos] & 0x1F) == tiles_16_level_door_left) {
+			if (current_level == 20) {
+				//Special event: there are two doors on this screen, when 11 (auxiliar_entry=0) and 16 (auxiliar_entry=1)
+				if (auxiliar_entry != 0 && tilepos == 11) continue;
+				if (auxiliar_entry != 1 && tilepos == 16) continue;
+			}
 			start_level_door(Kid.room, tilepos);
 		}
 	}

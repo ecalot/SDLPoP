@@ -181,7 +181,7 @@ void __pascal far autocontrol_shadow_level12();
 // SEG003.C
 void __pascal far init_game(int level);
 void __pascal far play_level(int level_number);
-void __pascal far do_startpos();
+void __pascal far do_startpos(int aux);
 void __pascal far set_start_pos();
 void __pascal far find_start_level_door();
 void __pascal far draw_level_first();
