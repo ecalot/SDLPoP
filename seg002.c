@@ -61,38 +61,39 @@ const byte init_shad_12[] = {0x0F, 0x51, 0xE8, 0, 0, 0, 0, 0};
 // seg002:0064
 void __pascal far check_shadow() {
 	offguard = 0;
-	if (!permanent_have_shadow) return;
-	if (current_level == 12) {
-		// Special event: level 12 shadow
-		if (!united_with_shadow && drawn_room == 15) {
+	if (permanent_have_shadow) {
+		if (current_level == 12) {
+			// Special event: level 12 shadow
+			if (!united_with_shadow && drawn_room == 15) {
+				Char.room = drawn_room;
+				if (get_tile(15, 1, 0) == tiles_22_sword) {
+					return;
+				}
+				shadow_initialized = 0;
+				do_init_shad(/*&*/init_shad_12, 7 /*fall*/);
+				return;
+			}
+		} else if (current_level == 6) {
+			// Special event: level 6 shadow
 			Char.room = drawn_room;
-			if (get_tile(15, 1, 0) == tiles_22_sword) {
+			if (Char.room == 1) {
+				if (leveldoor_open != 0x4D) {
+					play_sound(sound_25_presentation); // presentation (level 6 shadow)
+					leveldoor_open = 0x4D;
+				}
+				do_init_shad(/*&*/init_shad_6, 2 /*stand*/);
 				return;
 			}
-			shadow_initialized = 0;
-			do_init_shad(/*&*/init_shad_12, 7 /*fall*/);
-			return;
-		}
-	} else if (current_level == 6) {
-		// Special event: level 6 shadow
-		Char.room = drawn_room;
-		if (Char.room == 1) {
-			if (leveldoor_open != 0x4D) {
-				play_sound(sound_25_presentation); // presentation (level 6 shadow)
-				leveldoor_open = 0x4D;
-			}
-			do_init_shad(/*&*/init_shad_6, 2 /*stand*/);
-			return;
-		}
-	} else if (current_level == 5) {
-		// Special event: level 5 shadow
-		Char.room = drawn_room;
-		if (Char.room == 24) {
-			if (get_tile(24, 3, 0) != tiles_10_potion) {
+		} else if (current_level == 5) {
+			// Special event: level 5 shadow
+			Char.room = drawn_room;
+			if (Char.room == 24) {
+				if (get_tile(24, 3, 0) != tiles_10_potion) {
+					return;
+				}
+				do_init_shad(/*&*/init_shad_5, 2 /*stand*/);
 				return;
 			}
-			do_init_shad(/*&*/init_shad_5, 2 /*stand*/);
-			return;
 		}
 	}
 	enter_guard();
