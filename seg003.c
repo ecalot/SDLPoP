@@ -283,6 +283,8 @@ void __pascal far find_start_level_door() {
 				//Special event: there are two doors on this screen, when 11 (auxiliar_entry=0) and 16 (auxiliar_entry=1)
 				if (auxiliar_entry != 0 && tilepos == 11) continue;
 				if (auxiliar_entry != 1 && tilepos == 16) continue;
+			} else if (current_level == 26) {
+				if (tilepos == 25) continue;
 			}
 			start_level_door(Kid.room, tilepos);
 		}

@@ -341,7 +341,7 @@ void __pascal far up_pressed() {
 	else if (get_tile_behind_char() == tiles_16_level_door_left) leveldoor_tilepos = curr_tilepos;
 	else if (get_tile_infrontof_char() == tiles_16_level_door_left) leveldoor_tilepos = curr_tilepos;
 	if ((leveldoor_tilepos != -1) &&
-		level.start_room != drawn_room &&
+		(level.start_room != drawn_room || current_level == 26 ) && // special event: let the leveldoor work on level 3+, starting room
 		curr_room_modif[leveldoor_tilepos] >= 42 // this door must be fully open
 	){
 		go_up_leveldoor();
