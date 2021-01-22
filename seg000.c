@@ -61,7 +61,7 @@ const char* valid_levels[TOTAL_LEVELS]={
 	"11",
 	"12",
 	"12b",
-	"12c",
+	/* 14 */ "princess",
 	/* 15 */ "potion",
 	/* alternate sword */
 	"3*", /* 16 */

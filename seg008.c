@@ -1727,8 +1727,7 @@ void __pascal far show_time() {
 		(!(options.enable_freeze_time_during_end_music && next_level != current_level)) &&
 		#endif
 		rem_min != 0 &&
-		(current_level < 13 || (current_level == 13 && leveldoor_open == 0)) &&
-		current_level < 15
+		( current_level < 13 ||	(current_level == 13 && leveldoor_open == 0) || current_level > 15) //special event: time does not count on level 14 (princess), 15 (potion) and 13 when Jaffar is dead
 	) {
 		// Time passes
 		--rem_tick;
