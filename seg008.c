@@ -1402,7 +1402,6 @@ void __pascal far draw_leveldoor() {
 	if (modifier_left) {
 		if (level.start_room != drawn_room || (current_level == 26 && draw_xh == 24)) { // special event: level 3+ has an exit level door on the starting position
 			add_backtable(id_chtab_6_environment, 144 /*level door stairs*/, draw_xh + 1, 0, ybottom - 4, blitters_0_no_transp, 0);
-			printf("ff %d\n",draw_xh);
 		}
 		else {
 			short leveldoor_width = (tbl_level_type[current_level] == 0) ? 39 : 48;

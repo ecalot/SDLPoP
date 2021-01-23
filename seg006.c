@@ -607,7 +607,7 @@ void __pascal far play_seq() {
 						if (is_sound_on) {
 							if (current_level == 4 && permanent_have_shadow!=-1) {
 								play_sound(sound_32_shadow_music); // end level with shadow (level 4)
-							} else if (current_level != 13 && current_level != 15) {
+							} else if (current_level != 13 && current_level != 15 && !(current_level == 28 && Kid.room == 3)) {
 								play_sound(sound_41_end_level_music); // end level
 							}
 						}
@@ -615,6 +615,15 @@ void __pascal far play_seq() {
 				}
 				break;
 			case SEQ_END_LEVEL: // end level
+				if (current_level == 28 && Kid.room == 3) { //Special event, on level 5+ the leveldoor won't change the level, it'll just move you one room above
+					next_room = Char.room = Kid.room = 32;
+					Char.frame = seq_5_turn;
+					Char.x = x_bump[Char.curr_col + 5] + 14;
+					seqtbl_offset_char(seq_5_turn); // turn
+					find_start_level_door();
+					set_start_pos();
+					break;
+				}
 				++next_level;
 				break;
 			case SEQ_GET_ITEM: // get item
