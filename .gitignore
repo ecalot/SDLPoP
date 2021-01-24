@@ -49,3 +49,5 @@ Makefile.win
 
 # CLion
 .idea/
+
+.DS_Store
