@@ -947,8 +947,8 @@ void __pascal far make_loose_fall(byte loose_time) {
 	if ((curr_room_tiles[curr_tilepos] & 0x20) == 0) {
 		if (tlm_get_just_shake(curr_room_modif[curr_tilepos]) || tlm_get_loose(curr_room_modif[curr_tilepos])==0) {
 			int t,just_shake;
-			t = tlm_get_torch(curr_modifier);
-			just_shake = tlm_get_just_shake(curr_modifier);
+			t = tlm_get_torch(curr_room_modif[curr_tilepos]);
+			just_shake = tlm_get_just_shake(curr_room_modif[curr_tilepos]);
 			curr_room_modif[curr_tilepos] = torch_loose_modifier(loose_time,t,just_shake);
 			add_trob(curr_room, curr_tilepos, 0);
 			redraw_20h();
