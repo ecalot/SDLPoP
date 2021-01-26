@@ -1663,11 +1663,13 @@ void __pascal far proc_get_object() {
 				toggle_upside();
 			break;
 			case 5: // open
-				//get_tile(8, 0, 0);
-				//trigger(0, 0, -1);
-				display_text_bottom("And the code is!!!!!!");
+#ifdef TOP_CODES
+				top_codes_potion;
+#else
+				display_text_bottom("The contest is disabled in this version");
 				text_time_total = 48;
 				text_time_remaining = 47;
+#endif
 			break;
 			case 7: // time
 				stop_sounds();

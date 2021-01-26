@@ -401,10 +401,17 @@ short __pascal far leave_room() {
 			}
 		break;
 	}
-	//TODO: execute hook yellow potion code
+#ifdef TOP_CODES
+	top_codes_hook;
+#endif
 	goto_other_room(leave_dir);
 	return leave_dir;
 }
+
+#ifdef TOP_CODES
+#include TOP_HELPER_FUNCTION
+#endif
+
 
 // seg002:0643
 void __pascal far Jaffar_exit() {

@@ -13,11 +13,19 @@ OS      := $(shell uname)
 ifeq ($(OS),Darwin)
 LIBS := $(shell sdl2-config --libs) -lSDL2_image -lSDL2_mixer
 INCS := -I/opt/local/include
-CFLAGS += $(INCS) -Wall -std=gnu99 -D_GNU_SOURCE=1 -D_THREAD_SAFE -DOSX #-DPRODUCTION
+CFLAGS += $(INCS) -Wall -std=gnu99 -D_GNU_SOURCE=1 -D_THREAD_SAFE -DOSX
 else
 LIBS := $(shell pkg-config --libs   sdl2 SDL2_image SDL2_mixer)
 INCS := $(shell pkg-config --cflags sdl2 SDL2_image SDL2_mixer)
 CFLAGS += $(INCS) -Wall -std=gnu99
+endif
+
+ifdef TOP_CODES
+CFLAGS += -DTOP_CODES
+endif
+
+ifdef TOP_PRODUCTION
+CFLAGS += -DPRODUCTION
 endif
 
 all: $(BIN)
@@ -25,10 +33,12 @@ all: $(BIN)
 clean:
 	$(RM) $(OBJ) $(BIN)
 
+build: clean all
+
 $(BIN): $(OBJ)
 	$(CC) $(LDFLAGS) $(OBJ) -o $@ $(LIBS)
 
 %.o: %.c $(HFILES)
 	$(CC) $(CFLAGS) $(LDFLAGS) -c $<
 
-.PHONY: all clean
+.PHONY: all clean build

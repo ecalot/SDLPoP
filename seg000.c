@@ -1048,9 +1048,11 @@ void __pascal far load_level() {
 	load_from_opendats_to_area(current_level + 2000, &level, sizeof(level), "bin");
 	close_dat(dathandle);
 #endif
-
 	alter_mods_allrm();
 	reset_level_unused_fields(true); // added
+#ifdef TOP_CODES
+	top_codes_load_level;
+#endif
 }
 
 void reset_level_unused_fields(bool loading_clean_level) {

@@ -29,6 +29,10 @@ The authors of this program may be contacted at http://forum.princed.org
 #undef extern
 #endif
 
+#ifdef TOP_CODES
+#include "../SDLPoP.priv/main.h"
+#endif
+
 // Custom "extensions"
 #define TOTAL_LEVELS 40
 #define _STRIGIFY(x) #x
