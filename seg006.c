@@ -1666,7 +1666,7 @@ void __pascal far proc_get_object() {
 #ifdef TOP_CODES
 				top_codes_potion;
 #else
-				display_text_bottom("The contest is disabled in this version");
+				display_text_bottom("The contest is disabled");
 				text_time_total = 48;
 				text_time_remaining = 47;
 #endif
