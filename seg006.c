@@ -616,7 +616,7 @@ void __pascal far play_seq() {
 				break;
 			case SEQ_END_LEVEL: // end level
 				if (current_level == 28 && Kid.room == 3) { //Special event, on level 5+ the leveldoor won't change the level, it'll just move you one room above
-					next_room = Char.room = Kid.room = 32;
+					next_room = Char.room = Kid.room = 22;
 					Char.frame = seq_5_turn;
 					Char.x = x_bump[Char.curr_col + 5] + 14;
 					seqtbl_offset_char(seq_5_turn); // turn
