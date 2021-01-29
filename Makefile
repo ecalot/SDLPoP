@@ -20,6 +20,7 @@ INCS := $(shell pkg-config --cflags sdl2 SDL2_image SDL2_mixer)
 CFLAGS += $(INCS) -Wall -std=gnu99
 endif
 
+# activate with: export TOP_CODES=1
 ifdef TOP_CODES
 CFLAGS += -DTOP_CODES
 endif
