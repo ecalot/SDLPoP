@@ -935,7 +935,7 @@ int __pascal far remove_loose(int room, int tilepos) {
 	case tiles_11_loose:
 		curr_room_tiles[tilepos] = tiles_0_empty;
 		// note: the level type is used to determine the modifier of the empty space left behind
-		return tbl_level_type[current_level];
+		return tbl_level_type[current_level]==1;
 	default: // Should never happen
 		return 0;
 	}

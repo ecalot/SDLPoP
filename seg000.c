@@ -820,7 +820,7 @@ void __pascal far draw_game_frame() {
 	} else {
 		if (different_room) {
 			drawn_room = next_room;
-			if (tbl_level_type[current_level]) {
+			if (tbl_level_type[current_level]==1) {
 				gen_palace_wall_colors();
 			}
 			redraw_screen(1);
@@ -982,7 +982,7 @@ const char*const tbl_guard_dat[] = {"GUARD.DAT", "FAT.DAT", "SKEL.DAT", "VIZIER.
 // data:03C4
 const char*const tbl_envir_gr[] = {"", "C", "C", "E", "E", "V"};
 // data:03D0
-const char*const tbl_envir_ki[] = {"DUNGEON", "PALACE"};
+const char*const tbl_envir_ki[] = {"DUNGEON", "PALACE", "d1", "d2"};
 // seg000:0D20
 void __pascal far load_lev_spr(int level) {
 	dat_type* dathandle;
@@ -1016,7 +1016,7 @@ void __pascal far load_lev_spr(int level) {
 		int level_color = tbl_level_color[current_level];
 		if (level_color != 0) {
 			byte* env_pal = level_var_palettes + 0x30*(level_color-1);
-			byte* wall_pal = env_pal + 0x30 * tbl_level_type[current_level];
+			byte* wall_pal = env_pal + 0x30 * (tbl_level_type[current_level]==1);
 			set_pal_arr(0x50, 0x10, (rgb_type*)env_pal, 1);
 			set_pal_arr(0x60, 0x10, (rgb_type*)wall_pal, 1);
 			set_chtab_palette(chtab_addrs[id_chtab_6_environment], env_pal, 0x10);

@@ -420,7 +420,7 @@ void __pascal far draw_tile_topright() {
 	byte tiletype;
 	tiletype = row_below_left_[drawn_col].tiletype;
 	if (tiletype == tiles_7_doortop_with_floor || tiletype == tiles_12_doortop) {
-		if (tbl_level_type[current_level] == 0) return;
+		if (tbl_level_type[current_level] != 1) return;
 		add_backtable(id_chtab_6_environment, doortop_fram_top[row_below_left_[drawn_col].modifier], draw_xh, 0, draw_bottom_y, blitters_2_or, 0);
 	} else if (tiletype == tiles_20_wall) {
 		add_backtable(id_chtab_7_environmentwall, 2, draw_xh, 0, draw_bottom_y, blitters_2_or, 0);
@@ -492,11 +492,11 @@ void __pascal far draw_tile_right() {
 			break;
 		case tiles_7_doortop_with_floor:
 		case tiles_12_doortop:
-			if (tbl_level_type[current_level] == 0) return;
+			if (tbl_level_type[current_level] != 1) return;
 			add_backtable(id_chtab_6_environment, doortop_fram_bot[modifier_left], draw_xh, 0, get_tile_table(tile_left).right_y + draw_main_y, blitters_2_or, 0);
 			break;
 		case tiles_20_wall:
-			if (tbl_level_type[current_level] && (modifier_left & 0x80) == 0) {
+			if (tbl_level_type[current_level] == 1 && (modifier_left & 0x80) == 0) {
 				add_backtable(id_chtab_6_environment, 84 /*wall stripe*/, draw_xh + 3, 0, draw_main_y - 27, blitters_0_no_transp, 0);
 			}
 			add_backtable(id_chtab_7_environmentwall, 1, draw_xh, 0, get_tile_table(tile_left).right_y + draw_main_y, blitters_2_or, 0);
@@ -554,7 +554,7 @@ void __pascal far draw_tile_bottom(word arg_0) {
 	chtab_id = id_chtab_6_environment;
 	switch (curr_tile) {
 		case tiles_20_wall:
-			if (tbl_level_type[current_level] == 0 || graphics_mode != gmMcgaVga) {
+			if (tbl_level_type[current_level] != 1 || graphics_mode != gmMcgaVga) {
 				id = wall_fram_bottom[curr_modifier & 0x7F];
 			}
 			chtab_id = id_chtab_7_environmentwall;
@@ -694,7 +694,7 @@ void __pascal far draw_tile_fore() {
 			break;
 		case tiles_20_wall:
 		case 31:
-			if (tbl_level_type[current_level] == 0 || graphics_mode != gmMcgaVga) {
+			if (tbl_level_type[current_level] != 1 || graphics_mode != gmMcgaVga) {
 				if (curr_modifier==1 && curr_tile==31) {
 					add_foretable(id_chtab_7_environmentwall, 18, draw_xh, 0, draw_main_y, blitters_10h_transp, 0);
 				} else {
@@ -718,10 +718,10 @@ void __pascal far draw_tile_fore() {
 			ybottom = get_tile_table(curr_tile).fore_y + draw_main_y;
 			if (curr_tile == tiles_10_potion) {
 				// potions look different in the dungeon and the palace
-				if (tbl_level_type[current_level] != 0) id += 2;
+				if (tbl_level_type[current_level] == 1) id += 2;
 				add_foretable(id_chtab_1_flameswordpotion, id, xh, 6, ybottom, blitters_10h_transp, 0);
 			} else {
-				if ((curr_tile == tiles_3_pillar && tbl_level_type[current_level] == 0) ||
+				if ((curr_tile == tiles_3_pillar && tbl_level_type[current_level] != 1) ||
 						(curr_tile >= tiles_27_lattice_small && curr_tile < tiles_30_torch_with_debris)) {
 					add_foretable(id_chtab_6_environment, id, xh, 0, ybottom, blitters_0_no_transp, 0);
 				} else {
@@ -1397,15 +1397,15 @@ void __pascal far draw_leveldoor() {
 	word ybottom;
 	ybottom = draw_main_y - 13;
 	leveldoor_right = (draw_xh<<3)+48;
-	if (tbl_level_type[current_level]) leveldoor_right += 8;
+	if (tbl_level_type[current_level] == 1) leveldoor_right += 8;
 	add_backtable(id_chtab_6_environment, 99 /*leveldoor stairs bottom*/, draw_xh + 1, 0, ybottom, blitters_0_no_transp, 0);
 	if (modifier_left) {
 		if (level.start_room != drawn_room || (current_level == 26 && draw_xh == 24)) { // special event: level 3+ has an exit level door on the starting position
 			add_backtable(id_chtab_6_environment, 144 /*level door stairs*/, draw_xh + 1, 0, ybottom - 4, blitters_0_no_transp, 0);
 		}
 		else {
-			short leveldoor_width = (tbl_level_type[current_level] == 0) ? 39 : 48;
-			sbyte x_low = (tbl_level_type[current_level] == 0) ? 2 : 0; // dungeon level doors are shifted 2px to the right
+			short leveldoor_width = (tbl_level_type[current_level] != 1) ? 39 : 48;
+			sbyte x_low = (tbl_level_type[current_level] != 1) ? 2 : 0; // dungeon level doors are shifted 2px to the right
 			add_wipetable(0, 8*(draw_xh + 1) + x_low, ybottom - 4, 45, leveldoor_width, 0);
 		}
 	}
@@ -1880,7 +1880,7 @@ void __pascal far wall_pattern(int which_part,int which_table) {
 	// set the new seed
 	random_seed = drawn_room%24 + tbl_line[drawn_row] + drawn_col;
 	prandom(1); // fetch a random number and discard it
-	is_dungeon = (tbl_level_type[current_level] < DESIGN_PALACE);
+	is_dungeon = (tbl_level_type[current_level] != 1);
 	if ( (!is_dungeon) && (graphics_mode== GRAPHICS_VGA) ) {
 		// I haven't traced the palace WDA
 		//[...]

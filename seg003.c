@@ -297,7 +297,7 @@ void __pascal far draw_level_first() {
 
 	next_room = Kid.room;
 	check_the_end();
-	if (tbl_level_type[current_level]) {
+	if (tbl_level_type[current_level]==1) {
 		gen_palace_wall_colors();
 	}
 	draw_rect(&screen_rect, 0);
